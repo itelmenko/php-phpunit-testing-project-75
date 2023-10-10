@@ -1,0 +1,26 @@
+{
+    "name": "hexlet/code",
+    "description": "Downloader for web-pages",
+    "type": "project",
+    "require": {
+        "guzzlehttp/guzzle": "^7.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^8.0"
+    },
+    "license": "mit",
+    "autoload": {
+        "psr-4": {
+            "Hexlet\\Code\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Igor Telmenko",
+            "email": "igor-telmenko@yandex.ru"
+        }
+    ]
+}
