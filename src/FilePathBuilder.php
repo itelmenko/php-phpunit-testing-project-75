@@ -8,7 +8,7 @@ class FilePathBuilder
     public function buildFilePath(string $url, ?string $extension = null): string
     {
         $parts = parse_url($url);
-        $url = $parts['host'].$parts['path'];
+        $url = $parts['host'].($parts['path'] ?? '');
         $step1 = preg_replace('/[^0-9A-z]/', '-', $url);
         $step2 = preg_replace('/-+/', '-', $step1);
 

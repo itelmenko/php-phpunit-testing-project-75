@@ -29,6 +29,11 @@ class FilePathBuilderTest extends TestCase
                 null,
                 'some-domain-net-with-path'
             ],
+            'url_without_path' => [
+                'https://some.domain.net',
+                null,
+                'some-domain-net'
+            ],
             'file_with_extension' => [
                 'https://some.domain.net/with/path/',
                 'html',
