@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Hexlet\Code\Command;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
+use Hexlet\Code\Loader;
+use GuzzleHttp\Client;
+use Hexlet\Code\FilePathBuilder;
+use Hexlet\Code\Storage;
+
+$application = new Application();
+
+$application = new Application('page-loader', '1.0.0');
+$command = new Command(null, new Loader(new Client()), new FilePathBuilder(), new Storage());
+$application->add($command);
+$application->setDefaultCommand($command->getName(), true);
+$application->setDefinition(
+    new InputDefinition([
+        new InputArgument('command', InputArgument::REQUIRED, 'The command to execute'),
+        new InputOption(
+            '--version',
+            '-V',
+            InputOption::VALUE_NONE,
+            'Display this application version'
+        )
+    ])
+);
+$application->run();
