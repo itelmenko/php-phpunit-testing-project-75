@@ -1,5 +1,5 @@
 {
-    "name": "hexlet/code",
+    "name": "itelmenko/page-loader",
     "description": "Downloader for web-pages",
     "type": "project",
     "require": {
@@ -19,6 +19,7 @@
             "Hexlet\\Code\\": "src/"
         }
     },
+    "bin": ["bin/page-loader"],
     "authors": [
         {
             "name": "Igor Telmenko",
