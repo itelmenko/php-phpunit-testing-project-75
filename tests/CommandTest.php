@@ -32,7 +32,7 @@ class CommandTest extends TestCase
 
     public function testItLoadsContent(): void
     {
-        $content = '<html><head></head><body>Sample page</body></html>';
+        $content = '<html lang="en"><head><title></title></head><body>Sample page</body></html>';
         $url = 'http://some-domain.net/page/path';
         $mock = new MockHandler([
             new Response(202, [], $content),
@@ -53,7 +53,7 @@ class CommandTest extends TestCase
         $testerCommand = new CommandTester($command);
         $testerCommand->execute(['url' => $url, '--output' => $targetPathUrl]);
 
-        $result = @file_get_contents('/tmp/some-domain-net-page-path.html');
+        $result = @file_get_contents($this->getVirtualPath('loader/some-domain-net-page-path.html'));
         $this->assertEquals($content, $result);
     }
 }
