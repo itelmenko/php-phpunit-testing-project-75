@@ -48,7 +48,7 @@ class StorageTest extends TestCase
         $contentPath = $this->getVirtualPath($filePathUrl);
 
         $storage = new Storage();
-        @$storage->write($content, $contentPath);
+        $storage->write($content, $contentPath);
 
         $this->assertFalse($this->rootPath->hasChild($filePathUrl));
     }
@@ -63,7 +63,7 @@ class StorageTest extends TestCase
         $contentPath = $this->getVirtualPath($filePathUrl);
 
         $storage = new Storage();
-        @$storage->write($content, $contentPath);
+        $storage->write($content, $contentPath);
 
         $this->assertFalse($this->rootPath->hasChild($filePathUrl));
     }
