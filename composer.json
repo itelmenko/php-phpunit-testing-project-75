@@ -2,6 +2,7 @@
     "name": "itelmenko/page-loader",
     "description": "Downloader for web-pages",
     "type": "project",
+    "minimum-stability": "stable",
     "require": {
         "guzzlehttp/guzzle": "^7.0",
         "ext-json": "*",
