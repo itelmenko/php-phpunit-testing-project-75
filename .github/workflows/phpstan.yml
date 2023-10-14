@@ -14,7 +14,7 @@ jobs:
     - name: PHP Code Sniffer
       uses: php-actions/phpcs@v1
       with:
-        php_version: 7.2
+        php_version: 8.1
         standard: phpcs.xml
     - name: PHPStan
       uses: php-actions/phpstan@v3
