@@ -42,7 +42,7 @@ class Command extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $url = $input->getArgument('url');
-        $targetDir = $input->getOption('output');
+        $targetDir = $input->getOption('output') ?? getcwd();
 
         $this->log("url=$url");
         $this->log("output=$targetDir");
