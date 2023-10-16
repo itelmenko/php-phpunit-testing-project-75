@@ -52,6 +52,8 @@ class Command extends BaseCommand
         $filePath = $this->pathBuilder->buildFilePath($url, 'html');
         $resultPath = rtrim($targetDir, '/').'/'.$filePath;
 
+        $output->write("Page was loaded to $resultPath");
+
         return $this->storage->write($content, $resultPath) ? Command::SUCCESS : Command::FAILURE;
 
         // or return this to indicate incorrect command usage; e.g. invalid options
