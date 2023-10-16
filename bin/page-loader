@@ -20,7 +20,7 @@ use Hexlet\Code\Storage;
 
 $application = new Application();
 
-$application = new Application('page-loader', '1.0.0');
+$application = new Application('page-loader', '1.0.5');
 $command = new Command(null, new Loader(new Client()), new FilePathBuilder(), new Storage());
 $application->add($command);
 $application->setDefaultCommand($command->getName(), true);
