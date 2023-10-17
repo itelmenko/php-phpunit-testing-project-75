@@ -17,9 +17,7 @@ class Command extends BaseCommand
 
     public function __construct(
         ?string $name,
-        protected readonly Loader $loader,
-        protected readonly FilePathBuilder $pathBuilder,
-        protected readonly Storage $storage
+        protected readonly Loader $loader
     ) {
         parent::__construct($name);
     }
@@ -47,14 +45,15 @@ class Command extends BaseCommand
         $this->log("url=$url");
         $this->log("output=$targetDir");
 
-        $this->loader->load($url);
-        $content = $this->loader->getPageContent();
-        $filePath = $this->pathBuilder->buildFilePath($url, 'html');
-        $resultPath = rtrim($targetDir, '/').'/'.$filePath;
+        $storeResult = $this->loader->load($url, $targetDir);
 
-        $output->write("Page was loaded to $resultPath");
+        if ($storeResult === false) {
+            return Command::FAILURE;
+        }
 
-        return $this->storage->write($content, $resultPath) ? Command::SUCCESS : Command::FAILURE;
+        $output->write("Page was loaded to ".$this->loader->getResultPagePath());
+
+        return Command::SUCCESS;
 
         // or return this to indicate incorrect command usage; e.g. invalid options
         // or missing arguments (it's equivalent to returning int(2))

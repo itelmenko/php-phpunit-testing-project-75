@@ -9,7 +9,6 @@ use GuzzleHttp\Psr7\Response;
 use Hexlet\Code\Command;
 use Hexlet\Code\FilePathBuilder;
 use Hexlet\Code\Loader;
-use Hexlet\Code\Storage;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
@@ -44,16 +43,17 @@ class CommandTest extends TestCase
         $targetPathUrl = $this->getVirtualPath('loader');
         mkdir($targetPathUrl);
 
-        $loader = new Loader($client);
+        $pathBuilder = new FilePathBuilder();
+        $loader = new Loader($client, $pathBuilder);
         $application = new Application();
-        $command = new Command('page-loader', $loader, new FilePathBuilder(), new Storage());
+        $command = new Command('page-loader', $loader);
         $application->add($command);
 
         $command = $application->find('page-loader');
         $testerCommand = new CommandTester($command);
         $testerCommand->execute(['url' => $url, '--output' => $targetPathUrl]);
 
-        $result = @file_get_contents($this->getVirtualPath('loader/some-domain-net-page-path.html'));
+        $result = file_get_contents($this->getVirtualPath('loader/some-domain-net-page-path.html'));
         $this->assertEquals($content, $result);
     }
 }

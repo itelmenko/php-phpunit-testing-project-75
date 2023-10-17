@@ -16,12 +16,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Hexlet\Code\Loader;
 use GuzzleHttp\Client;
 use Hexlet\Code\FilePathBuilder;
-use Hexlet\Code\Storage;
 
 $application = new Application();
 
-$application = new Application('page-loader', '1.0.5');
-$command = new Command(null, new Loader(new Client()), new FilePathBuilder(), new Storage());
+$application = new Application('page-loader', '1.0.6');
+$command = new Command(null, new Loader(new Client(), new FilePathBuilder()));
 $application->add($command);
 $application->setDefaultCommand($command->getName(), true);
 $application->setDefinition(

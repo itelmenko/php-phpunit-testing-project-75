@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Hexlet\Code\FilePathBuilder;
 use Hexlet\Code\Loader;
 use PHPUnit\Framework\TestCase;
 
@@ -20,11 +21,14 @@ class LoaderTest extends TestCase
             new Response(202, [], $content),
         ]);
 
+        $targetDir = '/tmp/';
+
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
-        $loader = new Loader($client);
-        $loader->load($url);
+        $pathBuilder = new FilePathBuilder();
+        $loader = new Loader($client, $pathBuilder);
+        $loader->load($url, $targetDir);
 
         $this->assertEquals($content, $loader->getPageContent());
     }
