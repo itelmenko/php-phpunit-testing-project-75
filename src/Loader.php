@@ -19,7 +19,7 @@ class Loader
     {
         $this->content = $this->client->get($url)->getBody()->getContents();
 
-        $filePath = $this->pathBuilder->buildFilePath($url, 'html');
+        $filePath = $this->pathBuilder->buildIndexPath($url);
         $this->resultPagePath = rtrim($targetDir, '/').'/'.$filePath;
 
         return $this->write($this->content, $this->resultPagePath);
