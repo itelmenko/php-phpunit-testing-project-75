@@ -9,11 +9,13 @@
 
 Demo for step 1 https://asciinema.org/a/614693
 
+Demo for step 2 https://asciinema.org/a/4Rdj40FXQcSmGF6L7QfWyd9zr
+
 ### Description:
 
 Downloader for web-pages
 
-### Usage:
+### [Usage](https://asciinema.org/a/4Rdj40FXQcSmGF6L7QfWyd9zr):
 
 ```
 page-loader [options] [--] <url>
