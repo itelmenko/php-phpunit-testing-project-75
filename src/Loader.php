@@ -8,8 +8,6 @@ use GuzzleHttp\Client;
 class Loader
 {
 
-    private ?string $content = null;
-
     private ?string $resultPagePath = null;
 
     public function __construct(private readonly Client $client, private readonly FilePathBuilder $pathBuilder)
@@ -18,12 +16,16 @@ class Loader
 
     public function load(string $url, string $targetDir): bool
     {
-        $this->content = $this->client->get($url)->getBody()->getContents();
+        $sourceContent = $this->client->get($url)->getBody()->getContents();
         $this->resultPagePath = $this->getIndexPagePath($url, $targetDir);
         $folderPath = $this->getFolderPath($url, $targetDir);
-        $this->loadImages($folderPath);
 
-        return $this->write($this->content, $this->resultPagePath);
+        $document = new Document($sourceContent);
+        $this->loadImages($document, $folderPath);
+
+        $resultContent = $document->html();
+
+        return $this->write($resultContent, $this->resultPagePath);
     }
 
     private function getIndexPagePath(string $url, string $targetDir): string
@@ -42,15 +44,16 @@ class Loader
         return $folderPath;
     }
 
-    private function loadImages(string $folderPath): void
+    private function loadImages(Document $document, string $absoluteFolderPath): void
     {
-        $document = new Document($this->content);
         $images = $document->find('img');
-
         foreach ($images as $image) {
             $imgUrl =  $image->attr('src');
-            $imagePath = $folderPath.'/'.$this->pathBuilder->buildFilePath($imgUrl);
+            $imageName = $this->pathBuilder->buildFilePath($imgUrl);
+            $imagePath = $absoluteFolderPath.'/'.$imageName;
+            $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$imageName;
             $this->client->get($imgUrl, ['sink' =>  $imagePath]);
+            $image->setAttribute('src', $relativeImagePath);
         }
     }
 
@@ -62,10 +65,5 @@ class Loader
     private function write(string $content, string $filePath): bool
     {
         return file_put_contents($filePath, $content) !== false;
-    }
-
-    public function getPageContent(): ?string
-    {
-        return $this->content;
     }
 }

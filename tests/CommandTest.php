@@ -93,8 +93,16 @@ class CommandTest extends TestCase
 
         $this->execCommand($httpClient, $url);
 
+        $resultContent = <<<'EOD'
+        <html lang="en"><head><title></title></head>
+            <body>
+                Sample page
+                <img src="some-domain-com-area-page_files/some-domain-com-assets-main.png" alt="Main">
+            </body>
+        </html>
+        EOD;
         $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
-        $this->assertEquals($content, $result);
+        $this->assertEquals($resultContent, $result);
 
         $mainImg = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-main.png');
         $mainImgResult = @file_get_contents($mainImg);
