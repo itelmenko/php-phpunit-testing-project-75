@@ -72,4 +72,32 @@ class CommandTest extends TestCase
         $result = file_get_contents($this->getVirtualPath('loader/some-domain-net-page-path.html'));
         $this->assertEquals($content, $result);
     }
+
+    public function testItLoadsImages(): void
+    {
+        $url = 'http://some-domain.com/area/page';
+        $content = <<<'EOD'
+        <html lang="en"><head><title></title></head>
+            <body>
+                Sample page
+                <img src="http://some-domain.com/assets/main.png" alt="Main"/>
+            </body>
+        </html>
+        EOD;
+
+        $mainImgContent = 'ddddd';
+        $httpClient = $this->getClientMock([
+            new Response(202, [], $content),
+            new Response(202, [], $mainImgContent),
+        ]);
+
+        $this->execCommand($httpClient, $url);
+
+        $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
+        $this->assertEquals($content, $result);
+
+        $mainImg = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-main.png');
+        $mainImgResult = @file_get_contents($mainImg);
+        $this->assertEquals($mainImgContent, $mainImgResult);
+    }
 }

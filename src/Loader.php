@@ -2,6 +2,7 @@
 
 namespace Hexlet\Code;
 
+use DiDom\Document;
 use GuzzleHttp\Client;
 
 class Loader
@@ -21,6 +22,21 @@ class Loader
 
         $filePath = $this->pathBuilder->buildIndexPath($url);
         $this->resultPagePath = rtrim($targetDir, '/').'/'.$filePath;
+
+        $document = new Document($this->content);
+        $images = $document->find('img');
+
+        if (!empty($images)) {
+            $imgUrl =  $images[0]->attr('src');
+
+            $folderPath = rtrim($targetDir, '/').'/'.$this->pathBuilder->buildFolderPath($url);
+            if (! file_exists($folderPath)) {
+                mkdir($folderPath);
+            }
+
+            $imagePath = $folderPath.'/'.$this->pathBuilder->buildFilePath($imgUrl);
+            $this->client->get($imgUrl, ['sink' =>  $imagePath]);
+        }
 
         return $this->write($this->content, $this->resultPagePath);
     }
