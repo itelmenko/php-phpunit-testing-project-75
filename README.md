@@ -7,29 +7,33 @@
 
 # Page Loader 
 
-Demo for step 1 https://asciinema.org/a/614693
+This project is educational. It was used to develop additional skills in testing PHP code using phpunit. Please do not use it as a finished product.
 
-Demo for step 2 https://asciinema.org/a/4Rdj40FXQcSmGF6L7QfWyd9zr
+The resulting package is a console utility for downloading a web page with its resources.
 
-### Description:
-
-Downloader for web-pages
-
-### [Usage](https://asciinema.org/a/4Rdj40FXQcSmGF6L7QfWyd9zr):
+### Usage
 
 ```
 page-loader [options] [--] <url>
 ```
 
-#### Arguments:
+#### Arguments
 
 ```
 url                  Page url
 ```
 
-#### Options:
+#### Options
 
 ```
 -o, --output=OUTPUT  Path (folder) to store a result. Default is current working directory
 -V, --version        Display this application version
 ```
+
+
+
+## Demo
+
+Demo for step 1 https://asciinema.org/a/614693
+
+Demo for step 2 https://asciinema.org/a/4Rdj40FXQcSmGF6L7QfWyd9zr
