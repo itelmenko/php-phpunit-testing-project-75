@@ -19,26 +19,39 @@ class Loader
     public function load(string $url, string $targetDir): bool
     {
         $this->content = $this->client->get($url)->getBody()->getContents();
+        $this->resultPagePath = $this->getIndexPagePath($url, $targetDir);
+        $folderPath = $this->getFolderPath($url, $targetDir);
+        $this->loadImages($folderPath);
 
+        return $this->write($this->content, $this->resultPagePath);
+    }
+
+    private function getIndexPagePath(string $url, string $targetDir): string
+    {
         $filePath = $this->pathBuilder->buildIndexPath($url);
-        $this->resultPagePath = rtrim($targetDir, '/').'/'.$filePath;
+        return rtrim($targetDir, '/').'/'.$filePath;
+    }
 
+    private function getFolderPath(string $url, string $targetDir): string
+    {
+        $folderPath = rtrim($targetDir, '/').'/'.$this->pathBuilder->buildFolderPath($url);
+        if (! file_exists($folderPath)) {
+            mkdir($folderPath);
+        }
+
+        return $folderPath;
+    }
+
+    private function loadImages(string $folderPath): void
+    {
         $document = new Document($this->content);
         $images = $document->find('img');
 
-        if (!empty($images)) {
-            $imgUrl =  $images[0]->attr('src');
-
-            $folderPath = rtrim($targetDir, '/').'/'.$this->pathBuilder->buildFolderPath($url);
-            if (! file_exists($folderPath)) {
-                mkdir($folderPath);
-            }
-
+        foreach ($images as $image) {
+            $imgUrl =  $image->attr('src');
             $imagePath = $folderPath.'/'.$this->pathBuilder->buildFilePath($imgUrl);
             $this->client->get($imgUrl, ['sink' =>  $imagePath]);
         }
-
-        return $this->write($this->content, $this->resultPagePath);
     }
 
     public function getResultPagePath(): string
