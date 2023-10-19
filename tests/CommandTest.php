@@ -73,7 +73,7 @@ class CommandTest extends TestCase
         $this->assertEquals($content, $result);
     }
 
-    public function testItLoadsImages(): void
+    public function testItLoadsResources(): void
     {
         $url = 'http://some-domain.com/area/page';
         $content = <<<'EOD'
@@ -92,11 +92,13 @@ class CommandTest extends TestCase
         EOD;
 
         $mainImgContent = 'ddddd';
+        $cssFileContent = 'body { font-size: 16px; }';
+        $jsFileContent = 'console.log("Hello!")';
         $httpClient = $this->getClientMock([
             new Response(200, [], $content),
-            new Response(200, [], $mainImgContent), // img
-            new Response(200, [], 'body { font-size: 16px; }'), // css
-            new Response(200, [], 'console.log("Hello!")'), // js
+            new Response(200, [], $mainImgContent),
+            new Response(200, [], $cssFileContent),
+            new Response(200, [], $jsFileContent),
         ]);
 
         $this->execCommand($httpClient, $url);
@@ -121,5 +123,13 @@ class CommandTest extends TestCase
         $mainImg = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-main.png');
         $mainImgResult = @file_get_contents($mainImg);
         $this->assertEquals($mainImgContent, $mainImgResult);
+
+        $cssFile = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-menu.css');
+        $cssFileResult = @file_get_contents($cssFile);
+        $this->assertEquals($cssFileContent, $cssFileResult);
+
+        $jsFile = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-packs-js-runtime.js');
+        $jsFileResult = @file_get_contents($jsFile);
+        $this->assertEquals($jsFileContent, $jsFileResult);
     }
 }
