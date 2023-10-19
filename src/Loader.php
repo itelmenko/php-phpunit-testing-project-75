@@ -4,19 +4,25 @@ namespace Hexlet\Code;
 
 use DiDom\Document;
 use GuzzleHttp\Client;
+use Psr\Log\LoggerInterface;
 
 class Loader
 {
 
     private ?string $resultPagePath = null;
 
-    public function __construct(private readonly Client $client, private readonly FilePathBuilder $pathBuilder)
-    {
+    public function __construct(
+        private readonly Client $client,
+        private readonly FilePathBuilder $pathBuilder,
+        private readonly ?LoggerInterface $logger = null
+    ) {
     }
 
     public function load(string $url, string $targetDir): bool
     {
+        $this->logger?->info("Download main page ...");
         $sourceContent = $this->client->get($url)->getBody()->getContents();
+
         $this->resultPagePath = $this->getIndexPagePath($url, $targetDir);
         $folderPath = $this->getFolderPath($url, $targetDir);
 
@@ -48,16 +54,19 @@ class Loader
 
     private function loadImages(Document $document, string $absoluteFolderPath): void
     {
+        $this->logger?->info("Download images ...");
         $this->loadResources($document, 'img', 'src', $absoluteFolderPath);
     }
 
     private function loadCssFiles(Document $document, string $absoluteFolderPath): void
     {
+        $this->logger?->info("Download css-files ...");
         $this->loadResources($document, 'link[rel="stylesheet"]', 'href', $absoluteFolderPath);
     }
 
     private function loadJavaScriptFiles(Document $document, string $absoluteFolderPath): void
     {
+        $this->logger?->info("Download js-files ...");
         $this->loadResources($document, 'script', 'src', $absoluteFolderPath);
     }
 
@@ -76,6 +85,7 @@ class Loader
             $fileName = $this->pathBuilder->buildFilePath($elementUrl);
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
+            $this->logger?->debug("Download $elementUrl to $filePath");
             $this->client->get($elementUrl, ['sink' =>  $filePath]);
             $element->setAttribute($htmlAttribute, $relativeImagePath);
         }
@@ -88,6 +98,8 @@ class Loader
 
     private function write(string $content, string $filePath): bool
     {
+        $this->logger?->debug("Storing result page to $filePath...");
+
         return file_put_contents($filePath, $content) !== false;
     }
 }

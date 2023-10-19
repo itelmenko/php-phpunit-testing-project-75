@@ -9,6 +9,9 @@ if (file_exists($autoloadPath)) {
 }
 
 use Hexlet\Code\Command;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -18,9 +21,14 @@ use GuzzleHttp\Client;
 use Hexlet\Code\FilePathBuilder;
 
 $application = new Application();
-
 $application = new Application('page-loader', '1.0.9');
-$command = new Command(null, new Loader(new Client(), new FilePathBuilder()));
+
+$log = new Logger('main');
+$log->pushHandler(new StreamHandler('page-loader.log', Level::Debug));
+
+$loader = new Loader(new Client(), new FilePathBuilder(), $log);
+
+$command = new Command(null, $loader, $log);
 $application->add($command);
 $application->setDefaultCommand($command->getName(), true);
 $application->setDefinition(
