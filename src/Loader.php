@@ -22,6 +22,8 @@ class Loader
 
         $document = new Document($sourceContent);
         $this->loadImages($document, $folderPath);
+        $this->loadCssFiles($document, $folderPath);
+        $this->loadJavaScriptFiles($document, $folderPath);
 
         $resultContent = $document->html();
 
@@ -46,14 +48,36 @@ class Loader
 
     private function loadImages(Document $document, string $absoluteFolderPath): void
     {
-        $images = $document->find('img');
-        foreach ($images as $image) {
-            $imgUrl =  $image->attr('src');
-            $imageName = $this->pathBuilder->buildFilePath($imgUrl);
-            $imagePath = $absoluteFolderPath.'/'.$imageName;
-            $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$imageName;
-            $this->client->get($imgUrl, ['sink' =>  $imagePath]);
-            $image->setAttribute('src', $relativeImagePath);
+        $this->loadResources($document, 'img', 'src', $absoluteFolderPath);
+    }
+
+    private function loadCssFiles(Document $document, string $absoluteFolderPath): void
+    {
+        $this->loadResources($document, 'link[rel="stylesheet"]', 'href', $absoluteFolderPath);
+    }
+
+    private function loadJavaScriptFiles(Document $document, string $absoluteFolderPath): void
+    {
+        $this->loadResources($document, 'script', 'src', $absoluteFolderPath);
+    }
+
+    private function loadResources(
+        Document $document,
+        string   $cssSelector,
+        string   $htmlAttribute,
+        string   $absoluteFolderPath
+    ): void {
+        $elements = $document->find($cssSelector);
+        foreach ($elements as $element) {
+            $elementUrl =  $element->attr($htmlAttribute);
+            if (empty($elementUrl)) {
+                continue;
+            }
+            $fileName = $this->pathBuilder->buildFilePath($elementUrl);
+            $filePath = $absoluteFolderPath.'/'.$fileName;
+            $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
+            $this->client->get($elementUrl, ['sink' =>  $filePath]);
+            $element->setAttribute($htmlAttribute, $relativeImagePath);
         }
     }
 

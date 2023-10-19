@@ -77,27 +77,41 @@ class CommandTest extends TestCase
     {
         $url = 'http://some-domain.com/area/page';
         $content = <<<'EOD'
-        <html lang="en"><head><title></title></head>
+        <html lang="en">
+            <head>
+                <title></title>
+                <link rel="stylesheet" href="http://some-domain.com/assets/menu.css">
+            </head>
             <body>
                 Sample page
                 <img src="http://some-domain.com/assets/main.png" alt="Main"/>
+                <script>console.log('inline script')</script>
+                <script src="http://some-domain.com/packs/js/runtime.js"></script>
             </body>
         </html>
         EOD;
 
         $mainImgContent = 'ddddd';
         $httpClient = $this->getClientMock([
-            new Response(202, [], $content),
-            new Response(202, [], $mainImgContent),
+            new Response(200, [], $content),
+            new Response(200, [], $mainImgContent), // img
+            new Response(200, [], 'body { font-size: 16px; }'), // css
+            new Response(200, [], 'console.log("Hello!")'), // js
         ]);
 
         $this->execCommand($httpClient, $url);
 
         $resultContent = <<<'EOD'
-        <html lang="en"><head><title></title></head>
+        <html lang="en">
+            <head>
+                <title></title>
+                <link rel="stylesheet" href="some-domain-com-area-page_files/some-domain-com-assets-menu.css">
+            </head>
             <body>
                 Sample page
                 <img src="some-domain-com-area-page_files/some-domain-com-assets-main.png" alt="Main">
+                <script>console.log('inline script')</script>
+                <script src="some-domain-com-area-page_files/some-domain-com-packs-js-runtime.js"></script>
             </body>
         </html>
         EOD;

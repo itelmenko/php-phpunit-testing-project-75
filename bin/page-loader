@@ -19,7 +19,7 @@ use Hexlet\Code\FilePathBuilder;
 
 $application = new Application();
 
-$application = new Application('page-loader', '1.0.8');
+$application = new Application('page-loader', '1.0.9');
 $command = new Command(null, new Loader(new Client(), new FilePathBuilder()));
 $application->add($command);
 $application->setDefaultCommand($command->getName(), true);
