@@ -10,10 +10,16 @@ use Hexlet\Code\DownloadException;
 use Hexlet\Code\FilePathBuilder;
 use Hexlet\Code\Loader;
 use Hexlet\Code\StoreException;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
 class LoaderTest extends TestCase
 {
+
+    public function setUp(): void
+    {
+        vfsStream::setup('base');
+    }
 
     private function getLoader(MockHandler $mock): Loader
     {
@@ -43,7 +49,9 @@ class LoaderTest extends TestCase
     public function testLoaderThrowExceptionOnFileSystemError(): void
     {
         $url = 'http://some-domain.net/simple';
-        $dir = '/root/';
+        $dir = vfsStream::url('base');
+        chmod($dir, 000);
+
         $mock = new MockHandler([
             new Response(200, [], '<html lang="en"></html>'),
         ]);
