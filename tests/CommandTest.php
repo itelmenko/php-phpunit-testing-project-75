@@ -7,6 +7,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Hexlet\Code\Command;
+use Hexlet\Code\DownloadException;
 use Hexlet\Code\FilePathBuilder;
 use Hexlet\Code\Loader;
 use Monolog\Formatter\LineFormatter;
@@ -146,5 +147,29 @@ class CommandTest extends TestCase
         $jsFile = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-packs-js-runtime.js');
         $jsFileResult = @file_get_contents($jsFile);
         $this->assertEquals($jsFileContent, $jsFileResult);
+    }
+
+    public function testItReturnsFailureCodeIfLoaderThrowsException(): void
+    {
+        $loader = new class extends Loader {
+            public function __construct()
+            {
+            }
+            public function load(string $url, string $targetDir): bool
+            {
+                throw new DownloadException("Some http error");
+            }
+        };
+        $command = new Command('page-loader', $loader);
+
+        $application = new Application();
+        $application->add($command);
+
+        $command = $application->find('page-loader');
+        $testerCommand = new CommandTester($command);
+        $commandResult = $testerCommand->execute(['url' => 'http://some.url', '--output' => '/tpm']);
+
+        $this->assertEquals(1, $commandResult);
+        $this->assertEquals("Some http error", trim($testerCommand->getDisplay()));
     }
 }

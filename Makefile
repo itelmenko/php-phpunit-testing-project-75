@@ -9,3 +9,5 @@ fix-style:
 
 analyze:
 	@ composer exec phpstan analyse src tests
+
+all: check-style analyze test

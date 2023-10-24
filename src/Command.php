@@ -43,13 +43,19 @@ class Command extends BaseCommand
         $url = $input->getArgument('url');
         $targetDir = $input->getOption('output') ?? getcwd();
 
-        $storeResult = $this->loader->load($url, $targetDir);
-
-        if ($storeResult === false) {
+        try {
+            $storeResult = $this->loader->load($url, $targetDir);
+        } catch (\Exception $exception) {
+            $output->writeln("<error>{$exception->getMessage()}</error>");
             return Command::FAILURE;
         }
 
-        $output->write("Page was loaded to ".$this->loader->getResultPagePath());
+        if ($storeResult === false) {
+            $output->writeln('<error>Unknown error</error>');
+            return Command::FAILURE;
+        }
+
+        $output->writeln("<info>Page was loaded to {$this->loader->getResultPagePath()}</info>");
 
         return Command::SUCCESS;
 
