@@ -167,9 +167,39 @@ class CommandTest extends TestCase
 
         $command = $application->find('page-loader');
         $testerCommand = new CommandTester($command);
-        $commandResult = $testerCommand->execute(['url' => 'http://some.url', '--output' => '/tpm']);
+        $commandResult = $testerCommand->execute(['url' => 'http://some.url', '--output' => '/tmp']);
 
         $this->assertEquals(1, $commandResult);
         $this->assertEquals("Some http error", trim($testerCommand->getDisplay()));
+    }
+
+    public function testItReturnsFailureCodeIfResourcesHaveErrors(): void
+    {
+        $loader = new class extends Loader {
+            public function __construct()
+            {
+            }
+            public function load(string $url, string $targetDir): bool
+            {
+                $this->warning[] = "problem 1";
+                $this->warning[] = "problem 2";
+                $this->resultPagePath = '/tmp/path';
+                return true;
+            }
+        };
+        $command = new Command('page-loader', $loader);
+
+        $application = new Application();
+        $application->add($command);
+
+        $command = $application->find('page-loader');
+        $testerCommand = new CommandTester($command);
+        $commandResult = $testerCommand->execute(['url' => 'http://some.url/path', '--output' => $this->targetPathUrl]);
+
+        $this->assertEquals(1, $commandResult);
+        $output = $testerCommand->getDisplay();
+        $this->assertStringContainsString("problem 1", $output);
+        $this->assertStringContainsString("problem 2", $output);
+        $this->assertStringContainsString("Page was loaded with errors", $output);
     }
 }

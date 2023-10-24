@@ -64,4 +64,38 @@ class LoaderTest extends TestCase
 
         $loader->load($url, $dir);
     }
+
+    public function testLoaderHasWarningsIfResourcesHaveErrors(): void
+    {
+        $url = 'http://some-domain.net/resources';
+        $dir = vfsStream::url('base');
+
+        $mock = new MockHandler([
+            new Response(
+                200,
+                [],
+                <<<'EOD'
+                <html lang="en">
+                    <body>
+                        <img src="http://domain.test/error1">
+                        <img src="http://domain.test/good">
+                        <img src="http://domain.test/error2">
+                    </body>
+                </html>
+                EOD
+            ),
+            new Response(500, []),
+            new Response(200, [], 'image'),
+            new Response(500, []),
+        ]);
+
+        $loader = $this->getLoader($mock);
+        $loader->load($url, $dir);
+
+        $this->assertCount(2, $loader->getWarnings());
+        $this->assertStringContainsString('It is not possible to download resource', $loader->getWarnings()[0]);
+        $this->assertStringContainsString('It is not possible to download resource', $loader->getWarnings()[1]);
+        $this->assertStringContainsString('http://domain.test/error1', $loader->getWarnings()[0]);
+        $this->assertStringContainsString('http://domain.test/error2', $loader->getWarnings()[1]);
+    }
 }

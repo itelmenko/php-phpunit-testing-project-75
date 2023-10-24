@@ -10,7 +10,12 @@ use Psr\Log\LoggerInterface;
 class Loader
 {
 
-    private ?string $resultPagePath = null;
+    protected ?string $resultPagePath = null;
+
+    /**
+     * @var array<string>
+     */
+    protected array $warning = [];
 
     public function __construct(
         private readonly Client $client,
@@ -105,7 +110,12 @@ class Loader
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
-            $this->client->get($elementUrl, ['sink' =>  $filePath]);
+            try {
+                $this->client->get($elementUrl, ['sink' => $filePath]);
+            } catch (\Exception $exception) {
+                $this->logger?->error($exception->getMessage());
+                $this->warning[] = "It is not possible to download resource $elementUrl to $filePath";
+            }
             $element->setAttribute($htmlAttribute, $relativeImagePath);
         }
     }
@@ -117,6 +127,10 @@ class Loader
 
     private function throwStoreException(string $filePath, ?\Exception $exception = null): StoreException
     {
+        if (!empty($exception)) {
+            $this->logger?->error($exception->getMessage());
+        }
+
         throw new StoreException(
             "It is not possible to store files in path $filePath",
             1002,
@@ -124,6 +138,13 @@ class Loader
         );
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getWarnings(): array
+    {
+        return $this->warning;
+    }
 
     private function write(string $content, string $filePath): bool
     {

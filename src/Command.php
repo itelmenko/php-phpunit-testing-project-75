@@ -55,6 +55,17 @@ class Command extends BaseCommand
             return Command::FAILURE;
         }
 
+        $warnings = $this->loader->getWarnings();
+        if (!empty($warnings)) {
+            $output->writeln('<error>Page was loaded with errors: </error>');
+            foreach ($warnings as $warning) {
+                $output->writeln(" * $warning");
+            }
+            $output->writeln("");
+            $output->writeln("<info>Loaded to {$this->loader->getResultPagePath()}</info>");
+            return Command::FAILURE;
+        }
+
         $output->writeln("<info>Page was loaded to {$this->loader->getResultPagePath()}</info>");
 
         return Command::SUCCESS;
