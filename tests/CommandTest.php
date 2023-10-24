@@ -9,6 +9,10 @@ use GuzzleHttp\Psr7\Response;
 use Hexlet\Code\Command;
 use Hexlet\Code\FilePathBuilder;
 use Hexlet\Code\Loader;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
@@ -49,9 +53,20 @@ class CommandTest extends TestCase
     private function execCommand(Client $client, string $url): void
     {
         $pathBuilder = new FilePathBuilder();
-        $loader = new Loader($client, $pathBuilder);
-        $application = new Application();
+
+        $log = new Logger('main');
+        $stackHandler = new StreamHandler(__DIR__.'/page-loader.log', Level::Debug);
+        /**
+         * @var LineFormatter $formatter
+         */
+        $formatter = $stackHandler->getFormatter();
+        $formatter->ignoreEmptyContextAndExtra();
+        $log->pushHandler($stackHandler);
+
+        $loader = new Loader($client, $pathBuilder, $log);
         $command = new Command('page-loader', $loader);
+
+        $application = new Application();
         $application->add($command);
 
         $command = $application->find('page-loader');

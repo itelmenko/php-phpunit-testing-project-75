@@ -1,7 +1,6 @@
 <?php
 namespace Hexlet\Code;
 
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,8 +17,7 @@ class Command extends BaseCommand
 
     public function __construct(
         ?string $name,
-        protected readonly Loader $loader,
-        private readonly ?LoggerInterface $log = null
+        protected readonly Loader $loader
     ) {
         parent::__construct($name);
     }
@@ -45,9 +43,6 @@ class Command extends BaseCommand
         $url = $input->getArgument('url');
         $targetDir = $input->getOption('output') ?? getcwd();
 
-        $this->log?->info("Url: $url");
-        $this->log?->info("Output directory: $targetDir");
-
         $storeResult = $this->loader->load($url, $targetDir);
 
         if ($storeResult === false) {
@@ -55,7 +50,6 @@ class Command extends BaseCommand
         }
 
         $output->write("Page was loaded to ".$this->loader->getResultPagePath());
-        $this->log?->info("Download finished to ".$this->loader->getResultPagePath());
 
         return Command::SUCCESS;
 

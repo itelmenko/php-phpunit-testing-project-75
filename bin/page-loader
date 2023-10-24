@@ -21,14 +21,16 @@ use GuzzleHttp\Client;
 use Hexlet\Code\FilePathBuilder;
 
 $application = new Application();
-$application = new Application('page-loader', '1.0.9');
+$application = new Application('page-loader', '1.0.10');
 
 $log = new Logger('main');
-$log->pushHandler(new StreamHandler('page-loader.log', Level::Debug));
+$stackHandler = new StreamHandler('page-loader.log', Level::Debug);
+$stackHandler->getFormatter()->ignoreEmptyContextAndExtra();
+$log->pushHandler($stackHandler);
 
 $loader = new Loader(new Client(), new FilePathBuilder(), $log);
 
-$command = new Command(null, $loader, $log);
+$command = new Command(null, $loader);
 $application->add($command);
 $application->setDefaultCommand($command->getName(), true);
 $application->setDefinition(

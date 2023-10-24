@@ -20,6 +20,7 @@ class Loader
 
     public function load(string $url, string $targetDir): bool
     {
+        $this->logger?->info("Url: $url. Output directory: $targetDir");
         $this->logger?->info("Download main page ...");
         $sourceContent = $this->client->get($url)->getBody()->getContents();
 
@@ -100,6 +101,11 @@ class Loader
     {
         $this->logger?->debug("Storing result page to $filePath...");
 
-        return file_put_contents($filePath, $content) !== false;
+        $result = file_put_contents($filePath, $content);
+        if ($result !== false) {
+            $this->logger?->info("Download finished to ".$this->getResultPagePath());
+        }
+
+        return $result;
     }
 }
