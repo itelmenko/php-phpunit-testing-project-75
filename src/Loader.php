@@ -21,7 +21,11 @@ class Loader
     protected ?string $mainUrl = null;
 
     public function __construct(
-        private readonly Client $client,
+        /**
+         * For Hexlet tests we use the mixed type
+         * @var Client $client
+         */
+        private readonly mixed $client,
         private readonly FilePathBuilder $pathBuilder,
         private readonly ?LoggerInterface $logger = null
     ) {
