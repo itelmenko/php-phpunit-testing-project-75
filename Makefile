@@ -8,6 +8,6 @@ fix-style:
 	@ composer exec phpcbf
 
 analyze:
-	@ composer exec phpstan analyse src tests
+	@ composer exec phpstan analyse
 
 all: check-style analyze test
