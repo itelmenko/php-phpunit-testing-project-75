@@ -17,6 +17,9 @@ class Loader
      */
     protected array $warning = [];
 
+    protected ?string $baseUrl = null;
+    protected ?string $mainUrl = null;
+
     public function __construct(
         private readonly Client $client,
         private readonly FilePathBuilder $pathBuilder,
@@ -28,6 +31,8 @@ class Loader
     {
         $this->logger?->info("Url: $url. Output directory: $targetDir");
         $this->logger?->info("Download main page ...");
+        $this->mainUrl = $url;
+        $this->baseUrl = $this->getBaseUrl($url);
         $sourceContent = $this->loadIndexPage($url);
 
         $this->resultPagePath = $this->getIndexPagePath($url, $targetDir);
@@ -41,6 +46,27 @@ class Loader
         $resultContent = $document->html();
 
         return $this->write($resultContent, $this->resultPagePath);
+    }
+
+    private function getBaseUrl(string $url): string
+    {
+        $parts = parse_url($url);
+
+        return rtrim($parts['scheme'].'://'.$parts['host'], '/').'/';
+    }
+
+    private function getFullUrl(string $url): string
+    {
+        $parts = parse_url($url);
+        if (!empty($parts['host'] ?? null)) {
+            return $url;
+        }
+
+        if (substr($url, 0, 1) !== '/') {
+            return rtrim($this->mainUrl, '/').'/'.$url;
+        }
+
+        return $this->baseUrl.ltrim($url, '/');
     }
 
     private function loadIndexPage(string $url): string
@@ -106,6 +132,8 @@ class Loader
             if (empty($elementUrl)) {
                 continue;
             }
+            $this->logger?->debug("Resource URL: $elementUrl");
+            $elementUrl = $this->getFullUrl($elementUrl);
             $fileName = $this->pathBuilder->buildFilePath($elementUrl);
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;

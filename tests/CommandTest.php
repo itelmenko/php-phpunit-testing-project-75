@@ -51,7 +51,7 @@ class CommandTest extends TestCase
         return new Client(['handler' => $handlerStack]);
     }
 
-    private function execCommand(Client $client, string $url): void
+    private function execCommand(Client $client, string $url): CommandTester
     {
         $pathBuilder = new FilePathBuilder();
 
@@ -72,7 +72,10 @@ class CommandTest extends TestCase
 
         $command = $application->find('page-loader');
         $testerCommand = new CommandTester($command);
+
         $testerCommand->execute(['url' => $url, '--output' => $this->targetPathUrl]);
+
+        return $testerCommand;
     }
 
     public function testItLoadsContent(): void
@@ -117,7 +120,7 @@ class CommandTest extends TestCase
             new Response(200, [], $jsFileContent),
         ]);
 
-        $this->execCommand($httpClient, $url);
+        $testerCommand = $this->execCommand($httpClient, $url);
 
         $resultContent = <<<'EOD'
         <html lang="en">
@@ -133,6 +136,75 @@ class CommandTest extends TestCase
             </body>
         </html>
         EOD;
+
+        $this->assertEquals(0, $testerCommand->getStatusCode());
+
+        $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
+        $this->assertEquals($resultContent, $result);
+
+        $mainImg = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-main.png');
+        $mainImgResult = @file_get_contents($mainImg);
+        $this->assertEquals($mainImgContent, $mainImgResult);
+
+        $cssFile = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-menu.css');
+        $cssFileResult = @file_get_contents($cssFile);
+        $this->assertEquals($cssFileContent, $cssFileResult);
+
+        $jsFile = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-packs-js-runtime.js');
+        $jsFileResult = @file_get_contents($jsFile);
+        $this->assertEquals($jsFileContent, $jsFileResult);
+    }
+
+    public function testItLoadsResourcesForRelativeLinks(): void
+    {
+        $url = 'http://some-domain.com/area/page';
+        $content = <<<'EOD'
+        <html lang="en">
+            <head>
+                <title></title>
+                <link rel="stylesheet" href="/assets/menu.css">
+            </head>
+            <body>
+                Sample page
+                <img src="/assets/main.png" alt="Main"/>
+                <script>console.log('inline script')</script>
+                <script src="/packs/js/runtime.js"></script>
+            </body>
+        </html>
+        EOD;
+
+        $mainImgContent = 'ddddd';
+        $cssFileContent = 'body { font-size: 16px; }';
+        $jsFileContent = 'console.log("Hello!")';
+        $httpClient = $this->getClientMock([
+            new Response(200, [], $content),
+            new Response(200, [], $mainImgContent),
+            new Response(200, [], $cssFileContent),
+            new Response(200, [], $jsFileContent),
+        ]);
+
+        $testerCommand = $this->execCommand($httpClient, $url);
+
+        $resultContent = <<<'EOD'
+        <html lang="en">
+            <head>
+                <title></title>
+                <link rel="stylesheet" href="some-domain-com-area-page_files/some-domain-com-assets-menu.css">
+            </head>
+            <body>
+                Sample page
+                <img src="some-domain-com-area-page_files/some-domain-com-assets-main.png" alt="Main">
+                <script>console.log('inline script')</script>
+                <script src="some-domain-com-area-page_files/some-domain-com-packs-js-runtime.js"></script>
+            </body>
+        </html>
+        EOD;
+
+        echo 'PRINT';
+        print_r($testerCommand->getDisplay());
+
+        $this->assertEquals(0, $testerCommand->getStatusCode());
+
         $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
         $this->assertEquals($resultContent, $result);
 
