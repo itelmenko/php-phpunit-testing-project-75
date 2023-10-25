@@ -98,8 +98,9 @@ class CommandTest extends TestCase
             new Response(202, [], $content),
         ]);
 
-        $this->execCommand($httpClient, $url);
+        $testerCommand = $this->execCommand($httpClient, $url);
 
+        $this->assertEquals(0, $testerCommand->getStatusCode());
         $result = file_get_contents($this->getVirtualPath('loader/some-domain-net-page-path.html'));
         $this->assertEquals($content, $result);
     }
