@@ -73,6 +73,13 @@ class Loader
         return $this->baseUrl.ltrim($url, '/');
     }
 
+    private function isAnotherDomain(string $url): bool
+    {
+        $resourceBaseUrl = $this->getBaseUrl($url);
+
+        return $this->baseUrl != $resourceBaseUrl;
+    }
+
     private function loadIndexPage(string $url): string
     {
         try {
@@ -136,8 +143,15 @@ class Loader
             if (empty($elementUrl)) {
                 continue;
             }
+
             $this->logger?->debug("Resource URL: $elementUrl");
             $elementUrl = $this->getFullUrl($elementUrl);
+
+            if ($this->isAnotherDomain($elementUrl)) {
+                $this->logger?->debug("Skip external URL $elementUrl");
+                continue;
+            }
+
             $fileName = $this->pathBuilder->buildFilePath($elementUrl);
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
@@ -148,6 +162,7 @@ class Loader
                 $this->logger?->error($exception->getMessage());
                 $this->warning[] = "It is not possible to download resource $elementUrl to $filePath";
             }
+
             $element->setAttribute($htmlAttribute, $relativeImagePath);
         }
     }

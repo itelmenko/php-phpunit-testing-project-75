@@ -77,9 +77,9 @@ class LoaderTest extends TestCase
                 <<<'EOD'
                 <html lang="en">
                     <body>
-                        <img src="http://domain.test/error1">
-                        <img src="http://domain.test/good">
-                        <img src="http://domain.test/error2">
+                        <img src="http://some-domain.net/error1">
+                        <img src="http://some-domain.net/good">
+                        <img src="http://some-domain.net/error2">
                     </body>
                 </html>
                 EOD
@@ -95,7 +95,7 @@ class LoaderTest extends TestCase
         $this->assertCount(2, $loader->getWarnings());
         $this->assertStringContainsString('It is not possible to download resource', $loader->getWarnings()[0]);
         $this->assertStringContainsString('It is not possible to download resource', $loader->getWarnings()[1]);
-        $this->assertStringContainsString('http://domain.test/error1', $loader->getWarnings()[0]);
-        $this->assertStringContainsString('http://domain.test/error2', $loader->getWarnings()[1]);
+        $this->assertStringContainsString('http://some-domain.net/error1', $loader->getWarnings()[0]);
+        $this->assertStringContainsString('http://some-domain.net/error2', $loader->getWarnings()[1]);
     }
 }

@@ -128,7 +128,7 @@ class CommandTest extends TestCase
         $this->assertEquals(0, $testerCommand->getStatusCode());
 
         $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
-        $this->assertEquals($this->getFixture("result_page.html"), $result);
+        $this->assertEquals($this->getFixture("result_page_with_internal_urls.html"), $result);
 
         $mainImg = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-main.png');
         $this->assertEquals($mainImgContent, @file_get_contents($mainImg));
@@ -153,6 +153,24 @@ class CommandTest extends TestCase
                 'source_page_with_relative_urls.html'
             ],
         ];
+    }
+
+    public function testItIgnoresExternalResources(): void
+    {
+        $url = 'http://some-domain.com/area/page';
+        $fixtureName = 'source_page_with_external_urls.html';
+        $content = $this->getFixture($fixtureName);
+
+        $httpClient = $this->getClientMock([
+            new Response(200, [], $content),
+        ]);
+
+        $testerCommand = $this->execCommand($httpClient, $url);
+
+        $this->assertEquals(0, $testerCommand->getStatusCode());
+
+        $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
+        $this->assertEquals($this->getFixture($fixtureName), $result);
     }
 
     public function testItReturnsFailureCodeIfLoaderThrowsException(): void
