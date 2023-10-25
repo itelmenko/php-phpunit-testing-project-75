@@ -19,8 +19,12 @@
     "license": "mit",
     "autoload": {
         "psr-4": {
-            "Hexlet\\Code\\": "src/"
-        }
+            "Hexlet\\Code\\": "src/",
+            "Hexlet\\Code\\Tests\\": "tests/"
+        },
+        "files": [
+            "extra/function.php"
+        ]
     },
     "bin": ["bin/page-loader"],
     "authors": [
