@@ -21,7 +21,7 @@ use GuzzleHttp\Client;
 use Hexlet\Code\FilePathBuilder;
 
 $application = new Application();
-$application = new Application('page-loader', '1.0.13');
+$application = new Application('page-loader', '1.0.14');
 
 $log = new Logger('main');
 $stackHandler = new StreamHandler('page-loader.log', Level::Debug);

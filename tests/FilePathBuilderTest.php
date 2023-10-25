@@ -11,10 +11,14 @@ class FilePathBuilderTest extends TestCase
     /**
      * @dataProvider buildFilePathDataProvider
      */
-    public function testBuildFilePath(string $url, bool $keepExtension, string $expected): void
-    {
+    public function testBuildFilePath(
+        string $url,
+        bool $keepExtension,
+        ?string $defaultExtension,
+        string $expected
+    ): void {
         $pathBuilder = new FilePathBuilder();
-        $actual = $pathBuilder->buildFilePath($url, $keepExtension);
+        $actual = $pathBuilder->buildFilePath($url, $keepExtension, $defaultExtension);
         $this->assertEquals($expected, $actual);
     }
 
@@ -45,35 +49,47 @@ class FilePathBuilderTest extends TestCase
     {
         return [
             'simple_url' => [
-                'https://some.domain.net/with/path/',
-                true,
-                'some-domain-net-with-path'
+                'https://some.domain.net/with/path/', // url
+                true, // keepExtension
+                null, // defaultExtension
+                'some-domain-net-with-path' // expected
             ],
             'url_with_file_name_no_extension' => [
                 'https://some.domain.net/with/path/and-dot.html',
                 false,
+                null,
                 'some-domain-net-with-path-and-dot'
             ],
             'url_with_file_name_with_extension' => [
                 'https://some.domain.net/with/path/and-dot.html',
                 true,
+                null,
                 'some-domain-net-with-path-and-dot.html'
             ],
             'url_with_query' => [
                 'https://some.domain.net/with/path/?param1=foo&param2=bar',
                 false,
+                null,
                 'some-domain-net-with-path'
             ],
             'url_without_path_no_extension' => [
                 'https://some.domain.net',
                 false,
+                null,
                 'some-domain-net'
             ],
             'url_without_path_with_extension' => [
                 'https://some.domain.net',
                 true,
+                null,
                 'some-domain-net'
             ],
+            'url_without_extension_for_default_extension' => [
+                'https://some.domain.net/page',
+                true,
+                'html',
+                'some-domain-net-page.html'
+            ]
         ];
     }
 

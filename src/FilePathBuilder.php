@@ -4,7 +4,7 @@ namespace Hexlet\Code;
 
 class FilePathBuilder
 {
-    public function buildFilePath(string $url, bool $keepExtension = true): string
+    public function buildFilePath(string $url, bool $keepExtension = true, ?string $defaultExtension = null): string
     {
         $parts = parse_url($url);
         $path = $parts['path'] ?? '';
@@ -16,6 +16,10 @@ class FilePathBuilder
         $url = $parts['host'].$path;
         $step1 = preg_replace('/[^0-9A-z]/', '-', $url);
         $step2 = trim(preg_replace('/-+/', '-', $step1), '-');
+
+        if (empty($extension)) {
+            $extension = $defaultExtension;
+        }
 
         return ($keepExtension and !empty($extension)) ? "{$step2}.{$extension}" : $step2;
     }

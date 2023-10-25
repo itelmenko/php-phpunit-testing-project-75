@@ -173,6 +173,28 @@ class CommandTest extends TestCase
         $this->assertEquals($this->getFixture($fixtureName), $result);
     }
 
+    public function testItLoadsCanonicalLinkResource(): void
+    {
+        $url = 'http://some-domain.com/area/page';
+        $content = $this->getFixture('source_page_with_link_canonical.html');
+
+        $httpClient = $this->getClientMock([
+            new Response(200, [], $content),
+            new Response(200, [], $content),
+        ]);
+
+        $testerCommand = $this->execCommand($httpClient, $url);
+
+        $this->assertEquals(0, $testerCommand->getStatusCode());
+
+        $resultFixture = $this->getFixture('result_page_with_link_canonical.html');
+        $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
+        $this->assertEquals($resultFixture, $result);
+        $canonicalPage = 'loader/some-domain-com-area-page_files/some-domain-com-area-page.html';
+        $result = file_get_contents($this->getVirtualPath($canonicalPage));
+        $this->assertStringContainsString('Sample page', $result);
+    }
+
     public function testItReturnsFailureCodeIfLoaderThrowsException(): void
     {
         $loader = new class extends Loader {

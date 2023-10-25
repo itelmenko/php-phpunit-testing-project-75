@@ -153,7 +153,7 @@ class Loader
                 continue;
             }
 
-            $fileName = $this->pathBuilder->buildFilePath($elementUrl);
+            $fileName = $this->pathBuilder->buildFilePath($elementUrl, true, 'html');
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
