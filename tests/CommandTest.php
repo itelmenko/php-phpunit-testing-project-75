@@ -208,4 +208,16 @@ class CommandTest extends TestCase
         $this->assertStringContainsString("problem 2", $output);
         $this->assertStringContainsString("Page was loaded with errors", $output);
     }
+
+    public function testItReturnsErrorForIncorrectUrl(): void
+    {
+        $url = 'something';
+        $httpClient = $this->getClientMock([
+            new Response(202, [], ''),
+        ]);
+
+        $testerCommand = $this->execCommand($httpClient, $url);
+
+        $this->assertEquals(2, $testerCommand->getStatusCode());
+    }
 }

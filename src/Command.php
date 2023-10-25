@@ -43,6 +43,11 @@ class Command extends BaseCommand
         $url = $input->getArgument('url');
         $targetDir = $input->getOption('output') ?? getcwd();
 
+        if (! $this->validUrl($url)) {
+            $output->writeln("<error>Incorrect URL:  $url</error>");
+            return Command::INVALID;
+        }
+
         try {
             $storeResult = $this->loader->load($url, $targetDir);
         } catch (\Exception $exception) {
@@ -69,9 +74,10 @@ class Command extends BaseCommand
         $output->writeln("<info>Page was loaded to {$this->loader->getResultPagePath()}</info>");
 
         return Command::SUCCESS;
+    }
 
-        // or return this to indicate incorrect command usage; e.g. invalid options
-        // or missing arguments (it's equivalent to returning int(2))
-        // return Command::INVALID
+    private function validUrl(string $url): bool
+    {
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
     }
 }
