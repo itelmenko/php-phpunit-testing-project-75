@@ -162,6 +162,7 @@ class Loader
             } catch (\Exception $exception) {
                 $this->logger?->error($exception->getMessage());
                 $this->warning[] = "It is not possible to download resource $elementUrl to $filePath";
+                continue;
             }
 
             $element->setAttribute($htmlAttribute, $relativeImagePath);
