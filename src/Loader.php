@@ -53,7 +53,10 @@ class Loader
 
         $resultContent = $document->html();
 
+        echo 'CONTENT :'.PHP_EOL.$resultContent.PHP_EOL;
+
         $result = $this->write($resultContent, $this->resultPagePath);
+        $result = 'WRITE RESULT '.var_export($result, true);
 
         $resourcesRealPath = realpath($folderPath);
         echo "ls: ".shell_exec("ls -lha $targetDir").PHP_EOL;
@@ -154,13 +157,16 @@ class Loader
         foreach ($elements as $element) {
             $elementUrl =  $element->attr($htmlAttribute);
             if (empty($elementUrl)) {
+                echo "Empty Resource URL: $elementUrl".PHP_EOL;
                 continue;
             }
 
+            echo "Resource URL: $elementUrl".PHP_EOL;
             $this->logger?->debug("Resource URL: $elementUrl");
             $elementUrl = $this->getFullUrl($elementUrl);
 
             if ($this->isAnotherDomain($elementUrl)) {
+                echo "Skip external URL $elementUrl".PHP_EOL;
                 $this->logger?->debug("Skip external URL $elementUrl");
                 continue;
             }
@@ -169,9 +175,11 @@ class Loader
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
+            echo "Download $elementUrl to $filePath".PHP_EOL;
             try {
                 $this->client->get($elementUrl, ['sink' => $filePath]);
             } catch (\Exception $exception) {
+                echo "ERROR ".$exception->getMessage().PHP_EOL;
                 $this->logger?->error($exception->getMessage());
                 $this->warning[] = "It is not possible to download resource $elementUrl to $filePath";
                 continue;
