@@ -42,6 +42,13 @@ class Loader
         $this->resultPagePath = $this->getIndexPagePath($url, $targetDir);
         $folderPath = $this->getFolderPath($url, $targetDir);
 
+        echo PHP_EOL;
+        echo "targetDir = $targetDir".PHP_EOL;
+        echo "realpath for targetDir: ".realpath($targetDir).PHP_EOL;
+        echo "ls: ".shell_exec("ls -lha $targetDir").PHP_EOL;
+        echo shell_exec("tree $targetDir").PHP_EOL;
+        echo "~~~~~~~~~ . ~~~~~~~~".PHP_EOL;
+
         $document = new Document($sourceContent);
         $this->loadImages($document, $folderPath);
         $this->loadCssFiles($document, $folderPath);
