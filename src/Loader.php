@@ -182,6 +182,12 @@ class Loader
             echo "Download $elementUrl to $filePath".PHP_EOL;
             try {
                 $res = $this->client->get($elementUrl, ['sink' => $filePath]);
+                if (! file_exists($filePath)) {
+                    throw new StoreException(
+                        "Resource file was not stored to $filePath",
+                        1003
+                    );
+                }
                 //echo "GET SINK STATUS".$res->getStatusCode().PHP_EOL;
                 echo "GET SINK CONTENTS ".$res->getBody()->getContents().PHP_EOL;
             } catch (\Exception $exception) {
