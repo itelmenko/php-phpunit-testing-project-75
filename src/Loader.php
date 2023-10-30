@@ -44,6 +44,7 @@ class Loader
 
         echo PHP_EOL;
         echo "targetDir = $targetDir".PHP_EOL;
+        echo shell_exec('whoami').PHP_EOL;
         echo "realpath for targetDir: ".realpath($targetDir).PHP_EOL;
 
         $document = new Document($sourceContent);
@@ -56,9 +57,12 @@ class Loader
         echo 'CONTENT :'.PHP_EOL.$resultContent.PHP_EOL;
 
         $result = $this->write($resultContent, $this->resultPagePath);
-        $result = 'WRITE RESULT '.var_export($result, true);
+        echo 'WRITE RESULT '.var_export($result, true).PHP_EOL;
 
         $resourcesRealPath = realpath($folderPath);
+        $tryResult = $this->write(time(), $folderPath.'/try.txt');
+        echo 'TRY WRITE RESULT '.var_export($tryResult, true).PHP_EOL;
+
         echo "ls: ".shell_exec("ls -lha $targetDir").PHP_EOL;
         echo "ls resourcesRealPath: ".shell_exec("ls -lha $resourcesRealPath").PHP_EOL;
 
