@@ -183,6 +183,8 @@ class Loader
             try {
                 $res = $this->client->get($elementUrl, ['sink' => $filePath]);
                 if (! file_exists($filePath)) {
+                    $element->setAttribute($htmlAttribute, $relativeImagePath);
+
                     throw new StoreException(
                         "Resource file was not stored to $filePath",
                         1003
