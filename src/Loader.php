@@ -181,7 +181,9 @@ class Loader
             $this->logger?->debug("Download $elementUrl to $filePath");
             echo "Download $elementUrl to $filePath".PHP_EOL;
             try {
-                $this->client->get($elementUrl, ['sink' => $filePath]);
+                $res = $this->client->get($elementUrl, ['sink' => $filePath]);
+                echo "GET SINK STATUS".$res->getStatusCode().PHP_EOL;
+                echo "GET SINK CONTENTS ".$res->getBody()->getContents().PHP_EOL;
             } catch (\Exception $exception) {
                 echo "ERROR ".$exception->getMessage().PHP_EOL;
                 $this->logger?->error($exception->getMessage());
