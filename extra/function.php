@@ -15,10 +15,6 @@ if (! function_exists(__NAMESPACE__ .'\downloadPage')) {
 
         $loader = new Loader(new $clientClass(), new FilePathBuilder());
 
-        $result = $loader->load($url, $targetDir);
-
-        echo shell_exec("tree $targetDir");
-
-        return $result;
+        return $loader->load($url, $targetDir);
     }
 }

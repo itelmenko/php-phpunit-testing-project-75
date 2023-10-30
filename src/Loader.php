@@ -45,9 +45,6 @@ class Loader
         echo PHP_EOL;
         echo "targetDir = $targetDir".PHP_EOL;
         echo "realpath for targetDir: ".realpath($targetDir).PHP_EOL;
-        echo "ls: ".shell_exec("ls -lha $targetDir").PHP_EOL;
-        echo shell_exec("tree $targetDir").PHP_EOL;
-        echo "~~~~~~~~~ . ~~~~~~~~".PHP_EOL;
 
         $document = new Document($sourceContent);
         $this->loadImages($document, $folderPath);
@@ -56,7 +53,15 @@ class Loader
 
         $resultContent = $document->html();
 
-        return $this->write($resultContent, $this->resultPagePath);
+        $result = $this->write($resultContent, $this->resultPagePath);
+
+        $resourcesRealPath = realpath($folderPath);
+        echo "ls: ".shell_exec("ls -lha $targetDir").PHP_EOL;
+        echo "ls resourcesRealPath: ".shell_exec("ls -lha $resourcesRealPath").PHP_EOL;
+
+        echo "~~~~~~~~~ . ~~~~~~~~".PHP_EOL;
+
+        return $result;
     }
 
     private function getBaseUrl(string $url): string
