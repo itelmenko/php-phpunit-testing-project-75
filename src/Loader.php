@@ -179,19 +179,22 @@ class Loader
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
-            echo "Download $elementUrl to $filePath".PHP_EOL;
+            echo "Step 0. Download $elementUrl to $filePath".PHP_EOL;
             try {
+                echo "Class of \$this->client: ".$this->client::class.PHP_EOL;
+                echo "Sink $elementUrl to $filePath".PHP_EOL;
                 $res = $this->client->get($elementUrl, ['sink' => $filePath]);
                 if (! file_exists($filePath)) {
-                    $element->setAttribute($htmlAttribute, $relativeImagePath);
+                    echo "File not found: $filePath".PHP_EOL;
 
+                    $element->setAttribute($htmlAttribute, $relativeImagePath);
                     throw new StoreException(
                         "Resource file was not stored to $filePath",
                         1003
                     );
                 }
-                //echo "GET SINK STATUS".$res->getStatusCode().PHP_EOL;
-                echo "GET SINK CONTENTS ".$res->getBody()->getContents().PHP_EOL;
+
+                echo "Downloaded content: ".$res->getBody()->getContents().PHP_EOL;
             } catch (\Exception $exception) {
                 echo "ERROR ".$exception->getMessage().PHP_EOL;
                 $this->logger?->error($exception->getMessage());
