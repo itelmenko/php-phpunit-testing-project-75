@@ -197,6 +197,7 @@ class Loader
                 echo "ERROR ".$exception->getMessage().PHP_EOL;
                 $this->logger?->error($exception->getMessage());
                 $this->warning[] = "It is not possible to download resource $elementUrl to $filePath";
+                $element->setAttribute($htmlAttribute, $relativeImagePath); // В целях отладки все равно меням html
                 continue;
             }
 
