@@ -43,6 +43,8 @@ class Command extends BaseCommand
         $url = $input->getArgument('url');
         $targetDir = $input->getOption('output') ?? getcwd();
 
+        echo "INPUT DATA $url / $targetDir";
+
         if (! $this->validUrl($url)) {
             $output->writeln("<error>Incorrect URL:  $url</error>");
             return Command::INVALID;
