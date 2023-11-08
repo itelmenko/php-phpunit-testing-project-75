@@ -60,7 +60,7 @@ class Loader
         echo 'WRITE RESULT '.var_export($result, true).PHP_EOL;
 
         $resourcesRealPath = realpath($folderPath);
-        $tryResult = $this->write(time(), $folderPath.'/try.txt');
+        $tryResult = $this->write((string) time(), $folderPath.'/try.txt');
         echo 'TRY WRITE RESULT '.var_export($tryResult, true).PHP_EOL;
 
         echo "ls: ".shell_exec("ls -lha $targetDir").PHP_EOL;
@@ -183,7 +183,7 @@ class Loader
             try {
                 echo "Class of \$this->client: ".$this->client::class.PHP_EOL;
                 echo "Sink $elementUrl to $filePath".PHP_EOL;
-                $res = $this->client->get($elementUrl, ['sink' => $filePath]);
+                $res = $this->client->request('GET', $elementUrl, ['sink' => $filePath]);
                 if (! file_exists($filePath)) {
                     echo "File not found: $filePath".PHP_EOL;
 
