@@ -20,11 +20,14 @@ use Hexlet\Code\Loader;
 use GuzzleHttp\Client;
 use Hexlet\Code\FilePathBuilder;
 
+echo 'Step 1'.PHP_EOL;
+
 $application = new Application();
 $application = new Application('page-loader', '1.0.14');
 
+echo 'Step 2'.PHP_EOL;
 $log = new Logger('main');
-$stackHandler = new StreamHandler('page-loader.log', Level::Debug);
+$stackHandler = new StreamHandler(__DIR__.'/page-loader.log', Level::Debug);
 $stackHandler->getFormatter()->ignoreEmptyContextAndExtra();
 $log->pushHandler($stackHandler);
 
@@ -44,4 +47,10 @@ $application->setDefinition(
         )
     ])
 );
+
+echo 'Step 3'.PHP_EOL;
 $application->run();
+
+echo 'Step 4'.PHP_EOL;
+echo file_get_contents(__DIR__.'/page-loader.log').PHP_EOL;
+echo 'Done'.PHP_EOL;

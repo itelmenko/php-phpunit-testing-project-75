@@ -54,7 +54,7 @@ class Loader
 
         $resultContent = $document->html();
 
-        echo 'CONTENT :'.PHP_EOL.$resultContent.PHP_EOL;
+        //echo 'CONTENT :'.PHP_EOL.$resultContent.PHP_EOL;
 
         $result = $this->write($resultContent, $this->resultPagePath);
         echo 'WRITE RESULT '.var_export($result, true).PHP_EOL;
@@ -75,7 +75,7 @@ class Loader
     {
         $parts = parse_url($url);
 
-        return rtrim($parts['scheme'].'://'.$parts['host'], '/').'/';
+        return rtrim(($parts['scheme'] ?? 'https').'://'.$parts['host'], '/').'/';
     }
 
     private function getFullUrl(string $url): string
