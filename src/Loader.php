@@ -179,15 +179,13 @@ class Loader
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
-            echo "Step 0. Download $elementUrl to $filePath".PHP_EOL;
+            echo "Step 1. Download $elementUrl to $filePath".PHP_EOL;
             try {
                 echo "Class of \$this->client: ".$this->client::class.PHP_EOL;
                 echo "Sink $elementUrl to $filePath".PHP_EOL;
                 $this->client->request('GET', $elementUrl, ['sink' => $filePath]);
                 if (! file_exists($filePath)) {
                     echo "File not found: $filePath".PHP_EOL;
-
-                    $element->setAttribute($htmlAttribute, $relativeImagePath);
                     throw new StoreException(
                         "Resource file was not stored to $filePath",
                         1003
@@ -202,6 +200,7 @@ class Loader
                 continue;
             }
 
+            echo "Step 2. Set {$element->tag}->$htmlAttribute to $relativeImagePath".PHP_EOL;
             $element->setAttribute($htmlAttribute, $relativeImagePath);
         }
     }
