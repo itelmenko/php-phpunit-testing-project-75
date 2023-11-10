@@ -183,8 +183,7 @@ class Loader
             try {
                 echo "Class of \$this->client: ".$this->client::class.PHP_EOL;
                 echo "Sink $elementUrl to $filePath".PHP_EOL;
-                $urlWithoutSsl = str_replace('https://', 'http://', $elementUrl);
-                $this->client->request('GET', $urlWithoutSsl, ['sink' => $filePath]);
+                $this->client->request('GET', $elementUrl, ['sink' => $filePath]);
                 if (! file_exists($filePath)) {
                     echo "File not found: $filePath".PHP_EOL;
                     throw new StoreException(
