@@ -28,7 +28,7 @@ $stackHandler = new StreamHandler('page-loader.log', Level::Debug);
 $stackHandler->getFormatter()->ignoreEmptyContextAndExtra();
 $log->pushHandler($stackHandler);
 
-$loader = new Loader(new Client(), new FilePathBuilder(), $log);
+$loader = new Loader(new Client(['verify' => false]), new FilePathBuilder(), $log);
 
 $command = new Command(null, $loader);
 $application->add($command);
