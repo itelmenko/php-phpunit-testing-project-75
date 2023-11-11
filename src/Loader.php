@@ -56,7 +56,7 @@ class Loader
     {
         $parts = parse_url($url);
 
-        return rtrim($parts['scheme'].'://'.$parts['host'], '/').'/';
+        return rtrim(($parts['scheme'] ?? 'http').'://'.$parts['host'], '/').'/';
     }
 
     private function getFullUrl(string $url): string
@@ -158,7 +158,7 @@ class Loader
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
             try {
-                $this->client->get($elementUrl, ['sink' => $filePath]);
+                $this->client->request('GET', $elementUrl, ['sink' => $filePath]);
             } catch (\Exception $exception) {
                 $this->logger?->error($exception->getMessage());
                 $this->warning[] = "It is not possible to download resource $elementUrl to $filePath";
