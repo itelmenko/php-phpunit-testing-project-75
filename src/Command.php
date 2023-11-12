@@ -49,7 +49,8 @@ class Command extends BaseCommand
         }
 
         try {
-            $storeResult = $this->loader->load($url, $targetDir);
+            $this->loader->load($url, $targetDir);
+            $storeResult = $this->loader->isMainPageStored();
         } catch (\Exception $exception) {
             $output->writeln("<error>{$exception->getMessage()}</error>");
             return Command::FAILURE;

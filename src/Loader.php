@@ -12,6 +12,8 @@ class Loader
 
     protected ?string $resultPagePath = null;
 
+    protected ?bool $mainPageStored = null;
+
     /**
      * @var array<string>
      */
@@ -31,7 +33,7 @@ class Loader
     ) {
     }
 
-    public function load(string $url, string $targetDir): bool
+    public function load(string $url, string $targetDir): void
     {
         $this->logger?->info("Url: $url. Output directory: $targetDir");
         $this->logger?->info("Download main page ...");
@@ -49,7 +51,7 @@ class Loader
 
         $resultContent = $document->html();
 
-        return $this->write($resultContent, $this->resultPagePath);
+        $this->mainPageStored = $this->write($resultContent, $this->resultPagePath);
     }
 
     private function getBaseUrl(string $url): string
@@ -208,5 +210,10 @@ class Loader
         }
 
         return $result;
+    }
+
+    public function isMainPageStored(): ?bool
+    {
+        return $this->mainPageStored;
     }
 }

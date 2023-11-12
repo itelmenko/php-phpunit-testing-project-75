@@ -201,7 +201,7 @@ class CommandTest extends TestCase
             public function __construct()
             {
             }
-            public function load(string $url, string $targetDir): bool
+            public function load(string $url, string $targetDir): void
             {
                 throw new DownloadException("Some http error");
             }
@@ -225,12 +225,11 @@ class CommandTest extends TestCase
             public function __construct()
             {
             }
-            public function load(string $url, string $targetDir): bool
+            public function load(string $url, string $targetDir): void
             {
                 $this->warning[] = "problem 1";
                 $this->warning[] = "problem 2";
                 $this->resultPagePath = '/tmp/path';
-                return true;
             }
         };
         $command = new Command('page-loader', $loader);
