@@ -75,6 +75,8 @@ class CommandTest extends TestCase
 
     public function testItLoadsContent(): void
     {
+        echo 'testItLoadsContent()'.PHP_EOL;
+
         $url = 'http://some-domain.net/page/path';
         $content = '<html lang="en"><head><title></title></head><body>Sample page</body></html>';
         $httpClient = $this->getClientMock([

@@ -4,6 +4,7 @@ namespace Hexlet\Code\Tests\DownloadPageFunction;
 
 use Hexlet\Code\Tests\FixturesService;
 use Hexlet\Code\Tests\VirtualFileSystemService;
+use PHP_CodeSniffer\Tokenizers\PHP;
 use PHPUnit\Framework\TestCase;
 use function Downloader\Downloader\downloadPage;
 
@@ -11,6 +12,8 @@ class DownloadPageFunctionTest extends TestCase
 {
     public function testItLoadsResources(): void
     {
+
+        echo 'testItLoadsResources()'.PHP_EOL;
 
         $vfsService = new VirtualFileSystemService('function');
         $fixturesService = new FixturesService('function');

@@ -32,6 +32,8 @@ class LoaderTest extends TestCase
 
     public function testLoaderThrowExceptionOnClientHttpError(): void
     {
+        echo 'testLoaderThrowExceptionOnClientHttpError()'.PHP_EOL;
+
         $url = 'http://some-domain.net/unknown';
         $mock = new MockHandler([
             new Response(404, [], ''),

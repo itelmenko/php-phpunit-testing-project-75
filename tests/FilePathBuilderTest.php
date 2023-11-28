@@ -17,6 +17,8 @@ class FilePathBuilderTest extends TestCase
         ?string $defaultExtension,
         string $expected
     ): void {
+        echo 'testBuildFilePath()'.PHP_EOL;
+
         $pathBuilder = new FilePathBuilder();
         $actual = $pathBuilder->buildFilePath($url, $keepExtension, $defaultExtension);
         $this->assertEquals($expected, $actual);
