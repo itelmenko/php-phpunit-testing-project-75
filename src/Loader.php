@@ -33,6 +33,8 @@ class Loader
 
     public function load(string $url, string $targetDir): bool
     {
+        echo "Url: $url. Output directory: $targetDir".PHP_EOL;
+
         $this->logger?->info("Url: $url. Output directory: $targetDir");
         $this->logger?->info("Download main page ...");
         $this->mainUrl = $url;
@@ -49,7 +51,10 @@ class Loader
 
         $resultContent = $document->html();
 
-        return $this->write($resultContent, $this->resultPagePath);
+        $result = $this->write($resultContent, $this->resultPagePath);
+        echo "Url: $url. Output directory: $targetDir. Result: ".json_encode($result).PHP_EOL;
+
+        return $result;
     }
 
     private function getBaseUrl(string $url): string
@@ -146,10 +151,12 @@ class Loader
             }
 
             $this->logger?->debug("Resource URL: $elementUrl");
+            echo "Resource URL: $elementUrl".PHP_EOL;
             $elementUrl = $this->getFullUrl($elementUrl);
 
             if ($this->isAnotherDomain($elementUrl)) {
                 $this->logger?->debug("Skip external URL $elementUrl");
+                echo "Skip external URL $elementUrl".PHP_EOL;
                 continue;
             }
 
@@ -157,11 +164,13 @@ class Loader
             $filePath = $absoluteFolderPath.'/'.$fileName;
             $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
+            echo "Download $elementUrl to $filePath".PHP_EOL;
             try {
                 $this->client->request('GET', $elementUrl, ['sink' => $filePath]);
             } catch (\Exception $exception) {
                 $this->logger?->error($exception->getMessage());
                 $this->warning[] = "It is not possible to download resource $elementUrl to $filePath";
+                echo "It is not possible to download resource $elementUrl to $filePath".PHP_EOL;
                 continue;
             }
 
