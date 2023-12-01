@@ -17,10 +17,10 @@ class TestHttpClient extends Client
     public function __construct(array $config = [])
     {
         $responses = [
-            new Response(200, [], $this->getStubPageContent()),
-            new Response(200, [], $this->getStubImageContent()),
-            new Response(200, [], $this->getStubCssContent()),
-            new Response(200, [], $this->getStubJsContent()),
+            new Response(200, [], self::getStubPageContent()),
+            new Response(200, [], self::getStubImageContent()),
+            new Response(200, [], self::getStubCssContent()),
+            new Response(200, [], self::getStubJsContent()),
         ];
 
         $handlerStack = HandlerStack::create(new MockHandler($responses));
