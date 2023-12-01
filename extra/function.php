@@ -1,14 +1,15 @@
 <?php
 
+/**
+ * For Hexlet test's needs
+ */
+
 namespace Downloader\Downloader;
 
 use Hexlet\Code\FilePathBuilder;
 use Hexlet\Code\Loader;
 
-/**
- * For Hexlet test's needs
- */
-if (! function_exists(__NAMESPACE__ .'\downloadPage')) {
+if (! function_exists(__NAMESPACE__ . '\downloadPage')) {
     function downloadPage(string $url, ?string $targetPath, string $clientClass): bool
     {
         $targetDir = $targetPath ?? getcwd();
