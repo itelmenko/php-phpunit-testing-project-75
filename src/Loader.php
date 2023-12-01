@@ -59,7 +59,7 @@ class Loader
         $parts = parse_url($url);
 
         // @phpstan-ignore-next-line
-        return rtrim(($parts['scheme'] ?? 'http').'://'.$parts['host'], '/').'/';
+        return rtrim(($parts['scheme'] ?? 'http') . '://' . $parts['host'], '/') . '/';
     }
 
     private function getFullUrl(string $url): string
@@ -70,7 +70,7 @@ class Loader
         }
 
         if (!str_starts_with($url, '/')) {
-            return rtrim($this->mainUrl, '/').'/'.$url;
+            return rtrim($this->mainUrl, '/') . '/' . $url;
         }
 
         return $this->baseUrl . ltrim($url, '/');
