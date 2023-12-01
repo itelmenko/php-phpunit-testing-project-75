@@ -76,7 +76,7 @@ class CommandTest extends TestCase
     public function testItLoadsContent(): void
     {
         $url = 'http://some-domain.net/page/path';
-        $content = '<html lang="en"><head><title></title></head><body>Sample page</body></html>';
+        $content = "<html lang=\"en\">\n<head><title></title></head>\n<body>Sample page</body>\n</html>";
         $httpClient = $this->getClientMock([
             new Response(202, [], $content),
         ]);
