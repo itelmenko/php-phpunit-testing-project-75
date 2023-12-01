@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class FilePathBuilderTest extends TestCase
 {
-
     /**
      * @dataProvider buildFilePathDataProvider
      */
