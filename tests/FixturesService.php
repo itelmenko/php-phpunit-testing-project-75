@@ -12,11 +12,11 @@ class FixturesService
     {
         $parts = [__DIR__, "fixtures/{$this->namespace}", $fixtureName];
 
-        return realpath(implode('/', $parts));
+        return realpath(implode('/', $parts)) ?: '/';
     }
 
     public function getFixture(string $fixtureName): string
     {
-        return file_get_contents($this->getFixtureFullPath($fixtureName));
+        return file_get_contents($this->getFixtureFullPath($fixtureName)) ?: '';
     }
 }

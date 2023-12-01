@@ -3,6 +3,7 @@
 namespace Hexlet\Code;
 
 use DiDom\Document;
+use DiDom\Element;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use Psr\Log\LoggerInterface;
@@ -10,7 +11,7 @@ use Psr\Log\LoggerInterface;
 class Loader
 {
 
-    protected ?string $resultPagePath = null;
+    protected string $resultPagePath;
 
     /**
      * @var array<string>
@@ -18,7 +19,7 @@ class Loader
     protected array $warning = [];
 
     protected ?string $baseUrl = null;
-    protected ?string $mainUrl = null;
+    protected string $mainUrl;
 
     public function __construct(
         /**
@@ -56,6 +57,7 @@ class Loader
     {
         $parts = parse_url($url);
 
+        // @phpstan-ignore-next-line
         return rtrim(($parts['scheme'] ?? 'http').'://'.$parts['host'], '/').'/';
     }
 
@@ -66,7 +68,7 @@ class Loader
             return $url;
         }
 
-        if (substr($url, 0, 1) !== '/') {
+        if (!str_starts_with($url, '/')) {
             return rtrim($this->mainUrl, '/').'/'.$url;
         }
 
@@ -140,6 +142,9 @@ class Loader
     ): void {
         $elements = $document->find($cssSelector);
         foreach ($elements as $element) {
+            /**
+             * @var Element $element
+             */
             $elementUrl =  $element->attr($htmlAttribute);
             if (empty($elementUrl)) {
                 continue;
@@ -207,6 +212,6 @@ class Loader
             $this->throwStoreException($filePath);
         }
 
-        return $result;
+        return $result !== false;
     }
 }

@@ -8,6 +8,6 @@ fix-style:
 	@ composer exec phpcbf
 
 analyze:
-	@ composer exec phpstan analyse
+	@ composer exec phpstan analyse -- --ansi --memory-limit=-1
 
 all: check-style analyze test
