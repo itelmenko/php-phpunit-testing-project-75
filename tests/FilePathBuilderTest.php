@@ -42,7 +42,7 @@ class FilePathBuilderTest extends TestCase
     }
 
     /**
-     * @return array<string,string[]>
+     * @return array<string, array<int,bool|string|null>>
      */
     public function buildFilePathDataProvider(): array
     {

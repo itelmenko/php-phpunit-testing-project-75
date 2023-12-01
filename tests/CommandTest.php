@@ -174,7 +174,7 @@ class CommandTest extends TestCase
         $result = file_get_contents($this->vfsService->getVirtualPath('some-domain-com-area-page.html'));
         $this->assertEquals($resultFixture, $result);
         $canonicalPage = 'some-domain-com-area-page_files/some-domain-com-area-page.html';
-        $result = file_get_contents($this->vfsService->getVirtualPath($canonicalPage));
+        $result = file_get_contents($this->vfsService->getVirtualPath($canonicalPage)) ?: '';
         $this->assertStringContainsString('Sample page', $result);
     }
 

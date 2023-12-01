@@ -13,9 +13,10 @@ class FilePathBuilder
             $path = $this->removeExtension($extension, $path);
         }
 
+        // @phpstan-ignore-next-line
         $url = $parts['host'] . $path;
-        $step1 = preg_replace('/[^0-9A-z]/', '-', $url);
-        $step2 = trim(preg_replace('/-+/', '-', $step1), '-');
+        $step1 = preg_replace('/[^0-9A-z]/', '-', $url) ?: '';
+        $step2 = trim(preg_replace('/-+/', '-', $step1) ?: '', '-');
 
         if (empty($extension)) {
             $extension = $defaultExtension;
