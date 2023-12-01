@@ -14,7 +14,6 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
-use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -23,32 +22,16 @@ class CommandTest extends TestCase
 {
 
     private string $targetPathUrl;
+    
+    private VirtualFileSystemService $vfsService;
+
+    private FixturesService $fixturesService;
 
     public function setUp(): void
     {
-        vfsStream::setup('base');
-
-        $this->targetPathUrl = $this->getVirtualPath('loader');
-        mkdir($this->targetPathUrl);
-    }
-
-    private function getVirtualPath(?string $path = null): string
-    {
-        $directoryPath = vfsStream::url('base');
-
-        return empty($path) ? $directoryPath : "{$directoryPath}/".ltrim($path, '/');
-    }
-
-    private function getFixtureFullPath(string $fixtureName): string
-    {
-        $parts = [__DIR__, 'fixtures/command', $fixtureName];
-
-        return realpath(implode('/', $parts));
-    }
-
-    private function getFixture(string $fixtureName): string
-    {
-        return file_get_contents($this->getFixtureFullPath($fixtureName));
+        $this->vfsService = new VirtualFileSystemService('loader');
+        $this->targetPathUrl = $this->vfsService->getVirtualPath();
+        $this->fixturesService = new FixturesService('command');
     }
 
     /**
@@ -99,9 +82,8 @@ class CommandTest extends TestCase
         ]);
 
         $testerCommand = $this->execCommand($httpClient, $url);
-
         $this->assertEquals(0, $testerCommand->getStatusCode());
-        $result = file_get_contents($this->getVirtualPath('loader/some-domain-net-page-path.html'));
+        $result = file_get_contents($this->vfsService->getVirtualPath('some-domain-net-page-path.html'));
         $this->assertEquals($content, $result);
     }
 
@@ -111,7 +93,7 @@ class CommandTest extends TestCase
     public function testItLoadsResources(string $sourcePageName): void
     {
         $url = 'http://some-domain.com/area/page';
-        $content = $this->getFixture($sourcePageName);
+        $content = $this->fixturesService->getFixture($sourcePageName);
 
         $mainImgContent = 'image content';
         $cssFileContent = 'body { font-size: 16px; }';
@@ -127,16 +109,18 @@ class CommandTest extends TestCase
 
         $this->assertEquals(0, $testerCommand->getStatusCode());
 
-        $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
-        $this->assertEquals($this->getFixture("result_page_with_internal_urls.html"), $result);
+        $result = file_get_contents($this->vfsService->getVirtualPath('some-domain-com-area-page.html'));
+        $this->assertEquals($this->fixturesService->getFixture("result_page_with_internal_urls.html"), $result);
 
-        $mainImg = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-main.png');
+        $folderName= 'some-domain-com-area-page_files';
+
+        $mainImg = $this->vfsService->getVirtualPath($folderName.'/some-domain-com-assets-main.png');
         $this->assertEquals($mainImgContent, @file_get_contents($mainImg));
 
-        $cssFile = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-assets-menu.css');
+        $cssFile = $this->vfsService->getVirtualPath($folderName.'/some-domain-com-assets-menu.css');
         $this->assertEquals($cssFileContent, @file_get_contents($cssFile));
 
-        $jsFile = $this->getVirtualPath('loader/some-domain-com-area-page_files/some-domain-com-packs-js-runtime.js');
+        $jsFile = $this->vfsService->getVirtualPath($folderName.'/some-domain-com-packs-js-runtime.js');
         $this->assertEquals($jsFileContent, @file_get_contents($jsFile));
     }
 
@@ -159,7 +143,7 @@ class CommandTest extends TestCase
     {
         $url = 'http://some-domain.com/area/page';
         $fixtureName = 'source_page_with_external_urls.html';
-        $content = $this->getFixture($fixtureName);
+        $content = $this->fixturesService->getFixture($fixtureName);
 
         $httpClient = $this->getClientMock([
             new Response(200, [], $content),
@@ -169,14 +153,14 @@ class CommandTest extends TestCase
 
         $this->assertEquals(0, $testerCommand->getStatusCode());
 
-        $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
-        $this->assertEquals($this->getFixture($fixtureName), $result);
+        $result = file_get_contents($this->vfsService->getVirtualPath('some-domain-com-area-page.html'));
+        $this->assertEquals($this->fixturesService->getFixture($fixtureName), $result);
     }
 
     public function testItLoadsCanonicalLinkResource(): void
     {
         $url = 'http://some-domain.com/area/page';
-        $content = $this->getFixture('source_page_with_link_canonical.html');
+        $content = $this->fixturesService->getFixture('source_page_with_link_canonical.html');
 
         $httpClient = $this->getClientMock([
             new Response(200, [], $content),
@@ -187,11 +171,11 @@ class CommandTest extends TestCase
 
         $this->assertEquals(0, $testerCommand->getStatusCode());
 
-        $resultFixture = $this->getFixture('result_page_with_link_canonical.html');
-        $result = file_get_contents($this->getVirtualPath('loader/some-domain-com-area-page.html'));
+        $resultFixture = $this->fixturesService->getFixture('result_page_with_link_canonical.html');
+        $result = file_get_contents($this->vfsService->getVirtualPath('some-domain-com-area-page.html'));
         $this->assertEquals($resultFixture, $result);
-        $canonicalPage = 'loader/some-domain-com-area-page_files/some-domain-com-area-page.html';
-        $result = file_get_contents($this->getVirtualPath($canonicalPage));
+        $canonicalPage = 'some-domain-com-area-page_files/some-domain-com-area-page.html';
+        $result = file_get_contents($this->vfsService->getVirtualPath($canonicalPage));
         $this->assertStringContainsString('Sample page', $result);
     }
 
