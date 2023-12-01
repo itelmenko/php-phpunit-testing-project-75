@@ -29,16 +29,16 @@ class FilePathBuilder
     {
         $position = strripos($path, ".$extension");
 
-        return $position!==false ? substr_replace($path, '', $position, strlen(".$extension")) : $path;
+        return $position !== false ? substr_replace($path, '', $position, strlen(".$extension")) : $path;
     }
 
     public function buildIndexPath(string $url, string $extension = 'html'): string
     {
-        return $this->buildFilePath($url, false).".$extension";
+        return $this->buildFilePath($url, false) . ".$extension";
     }
 
     public function buildFolderPath(string $url, string $postfix = '_files'): string
     {
-        return $this->buildFilePath($url, false).$postfix;
+        return $this->buildFilePath($url, false) . $postfix;
     }
 }

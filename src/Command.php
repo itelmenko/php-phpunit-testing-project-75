@@ -1,4 +1,5 @@
 <?php
+
 namespace Hexlet\Code;
 
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -12,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'page-loader', description: 'Download a web-page')]
 class Command extends BaseCommand
 {
-
     protected static $defaultDescription = 'Download a web-page';
 
     public function __construct(

@@ -10,7 +10,6 @@ use Psr\Log\LoggerInterface;
 
 class Loader
 {
-
     protected string $resultPagePath;
 
     /**
@@ -43,7 +42,9 @@ class Loader
         $this->resultPagePath = $this->getIndexPagePath($url, $targetDir);
         $folderPath = $this->getFolderPath($url, $targetDir);
 
-        $document = new Document($sourceContent);
+        $document = new Document();
+        $document->preserveWhiteSpace();
+        $document->loadHtml($sourceContent);
         $this->loadImages($document, $folderPath);
         $this->loadCssFiles($document, $folderPath);
         $this->loadJavaScriptFiles($document, $folderPath);
@@ -72,7 +73,7 @@ class Loader
             return rtrim($this->mainUrl, '/').'/'.$url;
         }
 
-        return $this->baseUrl.ltrim($url, '/');
+        return $this->baseUrl . ltrim($url, '/');
     }
 
     private function isAnotherDomain(string $url): bool
@@ -98,12 +99,12 @@ class Loader
     private function getIndexPagePath(string $url, string $targetDir): string
     {
         $filePath = $this->pathBuilder->buildIndexPath($url);
-        return rtrim($targetDir, '/').'/'.$filePath;
+        return rtrim($targetDir, '/') . '/' . $filePath;
     }
 
     private function getFolderPath(string $url, string $targetDir): string
     {
-        $folderPath = rtrim($targetDir, '/').'/'.$this->pathBuilder->buildFolderPath($url);
+        $folderPath = rtrim($targetDir, '/') . '/' . $this->pathBuilder->buildFolderPath($url);
 
         if (!file_exists($folderPath)) {
             $result = @mkdir($folderPath);
@@ -136,9 +137,9 @@ class Loader
 
     private function loadResources(
         Document $document,
-        string   $cssSelector,
-        string   $htmlAttribute,
-        string   $absoluteFolderPath
+        string $cssSelector,
+        string $htmlAttribute,
+        string $absoluteFolderPath
     ): void {
         $elements = $document->find($cssSelector);
         foreach ($elements as $element) {
@@ -159,8 +160,8 @@ class Loader
             }
 
             $fileName = $this->pathBuilder->buildFilePath($elementUrl, true, 'html');
-            $filePath = $absoluteFolderPath.'/'.$fileName;
-            $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME).'/'.$fileName;
+            $filePath = $absoluteFolderPath . '/' . $fileName;
+            $relativeImagePath = pathinfo($absoluteFolderPath, PATHINFO_FILENAME) . '/' . $fileName;
             $this->logger?->debug("Download $elementUrl to $filePath");
             try {
                 $this->client->request('GET', $elementUrl, ['sink' => $filePath]);
@@ -207,7 +208,7 @@ class Loader
         $result = @file_put_contents($filePath, $content);
 
         if ($result !== false) {
-            $this->logger?->info("Download finished to ".$this->getResultPagePath());
+            $this->logger?->info("Download finished to " . $this->getResultPagePath());
         } else {
             $this->throwStoreException($filePath);
         }

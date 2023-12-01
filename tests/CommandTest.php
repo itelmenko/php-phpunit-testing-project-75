@@ -20,9 +20,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CommandTest extends TestCase
 {
-
     private string $targetPathUrl;
-    
+
     private VirtualFileSystemService $vfsService;
 
     private FixturesService $fixturesService;
@@ -51,7 +50,7 @@ class CommandTest extends TestCase
         $pathBuilder = new FilePathBuilder();
 
         $log = new Logger('main');
-        $stackHandler = new StreamHandler(__DIR__.'/page-loader.log', Level::Debug);
+        $stackHandler = new StreamHandler(__DIR__ . '/page-loader.log', Level::Debug);
         /**
          * @var LineFormatter $formatter
          */
@@ -76,7 +75,7 @@ class CommandTest extends TestCase
     public function testItLoadsContent(): void
     {
         $url = 'http://some-domain.net/page/path';
-        $content = '<html lang="en"><head><title></title></head><body>Sample page</body></html>';
+        $content = "<html lang=\"en\">\n<head><title></title></head>\n<body>Sample page</body>\n</html>";
         $httpClient = $this->getClientMock([
             new Response(202, [], $content),
         ]);
@@ -112,15 +111,15 @@ class CommandTest extends TestCase
         $result = file_get_contents($this->vfsService->getVirtualPath('some-domain-com-area-page.html'));
         $this->assertEquals($this->fixturesService->getFixture("result_page_with_internal_urls.html"), $result);
 
-        $folderName= 'some-domain-com-area-page_files';
+        $folderName = 'some-domain-com-area-page_files';
 
-        $mainImg = $this->vfsService->getVirtualPath($folderName.'/some-domain-com-assets-main.png');
+        $mainImg = $this->vfsService->getVirtualPath($folderName . '/some-domain-com-assets-main.png');
         $this->assertEquals($mainImgContent, @file_get_contents($mainImg));
 
-        $cssFile = $this->vfsService->getVirtualPath($folderName.'/some-domain-com-assets-menu.css');
+        $cssFile = $this->vfsService->getVirtualPath($folderName . '/some-domain-com-assets-menu.css');
         $this->assertEquals($cssFileContent, @file_get_contents($cssFile));
 
-        $jsFile = $this->vfsService->getVirtualPath($folderName.'/some-domain-com-packs-js-runtime.js');
+        $jsFile = $this->vfsService->getVirtualPath($folderName . '/some-domain-com-packs-js-runtime.js');
         $this->assertEquals($jsFileContent, @file_get_contents($jsFile));
     }
 

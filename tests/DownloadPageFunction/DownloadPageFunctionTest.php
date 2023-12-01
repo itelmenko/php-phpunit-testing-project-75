@@ -5,6 +5,7 @@ namespace Hexlet\Code\Tests\DownloadPageFunction;
 use Hexlet\Code\Tests\FixturesService;
 use Hexlet\Code\Tests\VirtualFileSystemService;
 use PHPUnit\Framework\TestCase;
+
 use function Downloader\Downloader\downloadPage;
 
 class DownloadPageFunctionTest extends TestCase
