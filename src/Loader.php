@@ -42,7 +42,9 @@ class Loader
         $this->resultPagePath = $this->getIndexPagePath($url, $targetDir);
         $folderPath = $this->getFolderPath($url, $targetDir);
 
-        $document = new Document($sourceContent);
+        $document = new Document();
+        $document->preserveWhiteSpace();
+        $document->loadHtml($sourceContent);
         $this->loadImages($document, $folderPath);
         $this->loadCssFiles($document, $folderPath);
         $this->loadJavaScriptFiles($document, $folderPath);
