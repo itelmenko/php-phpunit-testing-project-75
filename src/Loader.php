@@ -141,6 +141,10 @@ class Loader
         string $htmlAttribute,
         string $absoluteFolderPath
     ): void {
+        /**
+         * @var array<Element> $elements
+         *
+         */
         $elements = $document->find($cssSelector);
         foreach ($elements as $element) {
             /**
