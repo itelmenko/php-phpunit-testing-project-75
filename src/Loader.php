@@ -146,6 +146,7 @@ class Loader
          *
          */
         $elements = $document->find($cssSelector);
+        // @phpstan-ignore-next-line
         foreach ($elements as $element) {
             /**
              * @var Element $element

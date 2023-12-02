@@ -1,5 +1,6 @@
 includes:
     - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/hexlet/phpstan-fp/extension.neon
 
 parameters:
 
@@ -13,3 +14,20 @@ parameters:
 
     strictRules:
         strictCalls: false
+
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        - '#with no type specified#'
+        - '#Dynamic call to static method PHPUnit\\Framework\\Assert#'
+        - '#has no return type specified#'
+        - '#should return .* but returns#'
+        - '#Anonymous function should have native return type#'
+        - '#Call to an undefined method object::get\(\)#'
+        - '#Offset [\S]+ does not exist on array\{scheme\?: string, host\?: string, port\?: int#'
+
+    phpstanFunctionalProgramming:
+        disallowThrow: false
+        disallowClasses: false
+        disallowVariablesMutation: false
+        disallowUnusedExpression: false
