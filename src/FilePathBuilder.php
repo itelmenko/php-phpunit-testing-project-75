@@ -9,20 +9,20 @@ class FilePathBuilder
         $parts = parse_url($url);
         $path = $parts['path'] ?? '';
         $extension = pathinfo($path, PATHINFO_EXTENSION);
-        if (!empty($extension)) {
+        if ($extension !== '') {
             $path = $this->removeExtension($extension, $path);
         }
 
         // @phpstan-ignore-next-line
         $url = $parts['host'] . $path;
-        $step1 = preg_replace('/[^0-9A-z]/', '-', $url) ?: '';
-        $step2 = trim(preg_replace('/-+/', '-', $step1) ?: '', '-');
+        $step1 = preg_replace('/[^0-9A-z]/', '-', $url) ?? '';
+        $step2 = trim(preg_replace('/-+/', '-', $step1) ?? '', '-');
 
-        if (empty($extension)) {
+        if ($extension === '') {
             $extension = $defaultExtension;
         }
 
-        return ($keepExtension and !empty($extension)) ? "{$step2}.{$extension}" : $step2;
+        return ($keepExtension and !is_null($extension)) ? "{$step2}.{$extension}" : $step2;
     }
 
     private function removeExtension(string $extension, string $path): string

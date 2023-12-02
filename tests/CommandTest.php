@@ -174,13 +174,15 @@ class CommandTest extends TestCase
         $result = file_get_contents($this->vfsService->getVirtualPath('some-domain-com-area-page.html'));
         $this->assertEquals($resultFixture, $result);
         $canonicalPage = 'some-domain-com-area-page_files/some-domain-com-area-page.html';
-        $result = file_get_contents($this->vfsService->getVirtualPath($canonicalPage)) ?: '';
+        $canonicalContent = file_get_contents($this->vfsService->getVirtualPath($canonicalPage));
+        $result =  $canonicalContent !== false ? $canonicalContent : '';
         $this->assertStringContainsString('Sample page', $result);
     }
 
     public function testItReturnsFailureCodeIfLoaderThrowsException(): void
     {
         $loader = new class extends Loader {
+            // @phpstan-ignore-next-line
             public function __construct()
             {
             }
@@ -205,6 +207,7 @@ class CommandTest extends TestCase
     public function testItReturnsFailureCodeIfResourcesHaveErrors(): void
     {
         $loader = new class extends Loader {
+            // @phpstan-ignore-next-line
             public function __construct()
             {
             }

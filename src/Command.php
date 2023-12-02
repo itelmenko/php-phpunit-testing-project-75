@@ -61,7 +61,7 @@ class Command extends BaseCommand
         }
 
         $warnings = $this->loader->getWarnings();
-        if (!empty($warnings)) {
+        if (count($warnings) !== 0) {
             $output->writeln('<error>Page was loaded with errors: </error>');
             foreach ($warnings as $warning) {
                 $output->writeln(" * $warning");

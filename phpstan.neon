@@ -1,7 +1,7 @@
-parameters:
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
 
-    #checkMissingIterableValueType: false
-    #checkGenericClassInNonGenericObjectType: false
+parameters:
 
     level: 8
 
@@ -10,3 +10,17 @@ parameters:
         - src
         - extra
         - tests
+
+    strictRules:
+        #disallowedLooseComparison: false
+        #booleansInConditions: false
+        #uselessCast: false
+        #requireParentConstructorCall: false
+        #disallowedConstructs: false
+        #overwriteVariablesWithLoop: false
+        #closureUsesThis: false
+        #matchingInheritedMethodNames: false
+        #numericOperandsInArithmeticOperators: false
+        strictCalls: false
+        #switchConditionsMatchingType: false
+        #noVariableVariables: false

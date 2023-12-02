@@ -65,7 +65,7 @@ class Loader
     private function getFullUrl(string $url): string
     {
         $parts = parse_url($url);
-        if (!empty($parts['host'] ?? null)) {
+        if (isset($parts['host'])) {
             return $url;
         }
 
@@ -147,7 +147,7 @@ class Loader
              * @var Element $element
              */
             $elementUrl =  $element->attr($htmlAttribute);
-            if (empty($elementUrl)) {
+            if (is_null($elementUrl)) {
                 continue;
             }
 
@@ -182,7 +182,7 @@ class Loader
 
     private function throwStoreException(string $filePath, ?\Exception $exception = null): StoreException
     {
-        if (!empty($exception)) {
+        if (!is_null($exception)) {
             $this->logger?->error($exception->getMessage());
         }
 

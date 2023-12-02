@@ -19,6 +19,6 @@ class VirtualFileSystemService
         $directoryPath = vfsStream::url(self::ROOT_DIR_NAME);
         $directoryPath = rtrim($directoryPath, '/') . '/' . $this->basePath;
 
-        return empty($path) ? $directoryPath : "{$directoryPath}/" . ltrim($path, '/');
+        return is_null($path) ? $directoryPath : "{$directoryPath}/" . ltrim($path, '/');
     }
 }
